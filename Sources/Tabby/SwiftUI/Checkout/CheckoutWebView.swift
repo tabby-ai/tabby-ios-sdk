@@ -1,8 +1,8 @@
 //
 //  WebKitView.swift
-//  TabbyDemo
+//  Tabby
 //
-//  Created by ilya.kuznetsov on 12.09.2021.
+//  Created by ilya.kuznetsov on 26.08.2021.
 //
 
 import SwiftUI
@@ -10,10 +10,22 @@ import WebKit
 import UIKit
 
 
+enum URLType {
+    case local, `public`
+}
+
+public enum TabbyResult: String {
+    case close = "close"
+    case authorized = "authorized"
+    case rejected = "rejected"
+}
+
 @available(iOS 13.0, *)
-struct WebView: UIViewRepresentable  {
-    
+struct CheckoutWebView: UIViewRepresentable  {
+    var type: URLType
+    var productType: ProductType
     var url: String?
+    var vc: TabbyCheckoutViewModel
     
     func makeUIView(context: Context) -> WKWebView {
         let preferences = WKPreferences()
@@ -22,6 +34,9 @@ struct WebView: UIViewRepresentable  {
         configuration.preferences = preferences
         
         let webView = WKWebView(frame: CGRect.zero, configuration: configuration)
+        
+        let contentController = webView.configuration.userContentController
+        contentController.add(vc, name: "tabbyMobileSDK")
         
         webView.allowsBackForwardNavigationGestures = true
         webView.scrollView.isScrollEnabled = true
