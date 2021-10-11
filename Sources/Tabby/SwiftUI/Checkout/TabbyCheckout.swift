@@ -22,9 +22,58 @@ struct ActivityIndicator: UIViewRepresentable {
     }
 }
 
+class TabbySDK {
+    typealias SessionCompletion = Result<(sessionId: String, tabbyProductTypes: [TabbyProductType]), CheckoutError>
+    
+    public static var shared = TabbySDK()
+    
+    fileprivate var apiKey: String = ""
+    fileprivate var session: CheckoutSession?
+    
+    public func setup(withApiKey apiKey: String) {
+        self.apiKey = apiKey
+    }
+    
+    public func configure(forPayment payload: TabbyCheckoutPayload, completion: @escaping (SessionCompletion) -> ()) {
+        Api.shared.createSession(payload: payload, apiKey: TabbySDK.shared.apiKey, completed: { result in
+            DispatchQueue.main.async {
+                switch result {
+                case .success(let s):
+                    self.session = s
+                    var tabbyProductTypes: [TabbyProductType] = []
+                    
+                    if s.configuration.availableProducts["installments"] != nil {
+                        tabbyProductTypes.append(.installments)
+                    }
+                    if s.configuration.availableProducts["pay_later"] != nil {
+                        tabbyProductTypes.append(.pay_later)
+                    }
+                    let res: (sessionId: String, tabbyProductTypes: [TabbyProductType]) = (
+                        sessionId: s.id,
+                        tabbyProductTypes: tabbyProductTypes
+                    )
+                    completion(.success(res))
+                case .failure(let error):
+                    print(error.localizedDescription)
+                    completion(.failure(error))
+                }
+            }
+            
+        })
+    }
+}
+
 @available(iOS 13.0, *)
-struct CheckoutView: View {
-    @ObservedObject var checkout: TabbyCheckoutViewModel
+struct TabbyCheckout: View {
+    @StateObject var checkout = TabbyCheckoutViewModel()
+    
+    public var productType: TabbyProductType
+    public var onResult: (TabbyResult) -> ()
+    
+    init(productType: TabbyProductType, onResult: @escaping (TabbyResult) -> ()) {
+        self.productType = productType
+        self.onResult = onResult
+    }
     
     func checkForProducts () {
         if let s = checkout.session {
@@ -63,111 +112,43 @@ struct CheckoutView: View {
                     checkout.payLaterURL = webUrl
                     checkout.paylaterButtonEnabled = true
                 default:
-                    continue
+                    break
                 }
             }
         }
     }
     
     var body: some View {
-        return NavigationView {
-            VStack{
-                if checkout.session == nil {
-                    ActivityIndicator(isAnimating: .constant(true), style: .medium)
-                }
-                VStack {
-                    NavigationLink(
-                        destination: CheckoutWebView(
-                            type: .public,
-                            productType: .installments,
-                            url: checkout.installmentsURL,
-                            vc: checkout
-                        )) {
-                        HStack {
-                            Text("Pay in installments")
-                                .font(.headline)
-                                .foregroundColor(checkout.installmentsButtonEnabled ? .black : .white)
-                        }
-                        .padding(.horizontal, 16)
-                        .padding(.vertical, 8)
-                        .frame(minWidth: 150, idealWidth: 150)
-                        .background(checkout.installmentsButtonEnabled ? Color("Tabby") : Color(.gray))
-                        .cornerRadius(8)
-                    }
-                    .disabled(!checkout.installmentsButtonEnabled)
-                    
-                    NavigationLink(
-                        destination: CheckoutWebView(
-                            type: .public,
-                            productType: .payLater,
-                            url: checkout.payLaterURL,
-                            vc: checkout
-                        )) {
-                        HStack {
-                            Text("Pay later with Tabby")
-                                .font(.headline)
-                                .foregroundColor(checkout.paylaterButtonEnabled ? .black : .white)
-                        }
-                        .padding(.horizontal, 16)
-                        .padding(.vertical, 8)
-                        .frame(minWidth: 150, idealWidth: 150)
-                        .background(checkout.paylaterButtonEnabled ? Color("Tabby") : Color(.gray))
-                        .cornerRadius(8)
-                    }
-                    .disabled(!checkout.paylaterButtonEnabled)
-                }
-                
-            }.onAppear(perform: {
-                checkForProducts()
-            }).navigationBarTitle("Tabby")
-        }
-        
-    }
-}
-
-@available(iOS 13.0, *)
-public struct TabbyCheckout: View {
-    @StateObject var checkout = TabbyCheckoutViewModel()
-    
-    var apiKey: String
-    var payload: TabbyCheckoutPayload
-    var completion: (TabbyResult) -> ()
-    
-    func createCheckoutSession() {
-        if checkout.session != nil {
-            return
-        }
-        checkout.pending = true
-        Api.shared.createSession(payload: payload, apiKey: apiKey, completed: { result in
-            DispatchQueue.main.async {
-                switch result {
-                case .success(let s):
-                    checkout.session = s
-                    checkout.pending = false
-                case .failure(let error):
-                    print(error.localizedDescription)
-                    checkout.pending = false
-                }
-            }
-        })
-    }
-    
-    public var body: some View {
         HStack {
-            if checkout.pending {
-                ActivityIndicator(isAnimating: .constant(true), style: .medium)
+            if(productType == .installments) {
+                CheckoutWebView(
+                    type: .public,
+                    productType: .installments,
+                    url: self.checkout.installmentsURL,
+                    vc: self.checkout
+                )
+            } else if (productType == .pay_later) {
+                CheckoutWebView(
+                    type: .public,
+                    productType: .payLater,
+                    url: self.checkout.payLaterURL,
+                    vc: self.checkout
+                )
             } else {
-                CheckoutView(checkout: checkout)
+                ActivityIndicator(isAnimating: .constant(true), style: .medium)
             }
         }
         .valueChanged(value: checkout.result, onChange: { val in
             guard let v = val else {
                 return
             }
-            completion(v)
+            onResult(v)
         })
         .onAppear() {
-            createCheckoutSession()
+            if let s = TabbySDK.shared.session {
+                checkout.session = s
+                self.checkForProducts()
+            }
         }
     }
 }
