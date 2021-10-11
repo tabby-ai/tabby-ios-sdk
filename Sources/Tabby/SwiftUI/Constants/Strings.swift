@@ -25,7 +25,6 @@ let STRINGS_AR = [
     "in1Month": "خلال شهر",
     "in2Months": "خلال شهرين",
     "in3Months": "خلال ٣ أشهر",
-//    "presentation": "أو قسمها على ٤ دفعات شهرية بقيمة",
     "presentation": "أو قسمها على ٤ دفعات شهرية بقيمة",
     "noInterest": "بدون رسوم أو فوائد.",
     "learnMore": "لمعرفة المزيد"
