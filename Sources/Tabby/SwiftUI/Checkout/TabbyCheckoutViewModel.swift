@@ -32,8 +32,7 @@ final class TabbyCheckoutViewModel: UIViewController, WKScriptMessageHandlerWith
             }
         }
     }
-    
-    
+
     func userContentController(_ userContentController: WKUserContentController, didReceive message: WKScriptMessage, replyHandler: @escaping (Any?, String?) -> Void) {
         // implementation is not required
     }
