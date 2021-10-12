@@ -16,9 +16,9 @@ public enum Images {
 }
 
 let imgUrls: [Images:String] = [
-    Images.logo: "https://i.ibb.co/HzFPK1p/logoimg.png",
-    Images.round1:  "https://i.ibb.co/0tfzSZy/Round1.png",
-    Images.round2: "https://i.ibb.co/jzPCWJJ/Round2.png",
-    Images.round3: "https://i.ibb.co/Mhdh9xM/Round3.png",
-    Images.round4: "https://i.ibb.co/0jry6FQ/Round4.png"
+    Images.logo: "https://cdn.tabby.ai/assets/logoimg.png",
+    Images.round1:  "https://cdn.tabby.ai/assets/Round1.png",
+    Images.round2: "https://cdn.tabby.ai/assets/Round2.png",
+    Images.round3: "https://cdn.tabby.ai/assets/Round3.png",
+    Images.round4: "https://cdn.tabby.ai/assets/Round4.png"
 ]
