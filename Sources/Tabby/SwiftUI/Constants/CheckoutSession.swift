@@ -29,6 +29,12 @@ struct Product: Codable {
     }
 }
 
+public enum TabbyResult: String {
+    case close = "close"
+    case authorized = "authorized"
+    case rejected = "rejected"
+}
+
 enum TabbyProductType: String, Codable {
     case installments = "installments"
     case pay_later = "pay_later"

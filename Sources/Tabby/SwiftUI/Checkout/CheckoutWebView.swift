@@ -14,12 +14,6 @@ enum URLType {
     case local, `public`
 }
 
-public enum TabbyResult: String {
-    case close = "close"
-    case authorized = "authorized"
-    case rejected = "rejected"
-}
-
 @available(iOS 13.0, *)
 struct CheckoutWebView: UIViewRepresentable  {
     var type: URLType
