@@ -63,10 +63,29 @@ import Tabby
 let customerPayment = Payment(
     amount: "340",
     currency: .AED,
+    description: "tabby Store Order #3",
     buyer: Buyer(
-        email: "successful.payment@tabby.ai",
-        phone: "500000001",
-        name: "Yazan Khalid"
+    email: "successful.payment@tabby.ai",
+    phone: "500000001",
+    name: "Yazan Khalid"
+        dob: nil
+    ), order: Order(
+        reference_id: "#xxxx-xxxxxx-xxxx",
+        items: [
+            OrderItem(
+                description: "Jersey",
+                product_url: "https://tabby.store/p/SKU123",
+                quantity: 1,
+                reference_id: "SKU123",
+                title: "Pink jersey",
+                unit_price: "300"
+            )],
+        shipping_amount: "50",
+        tax_amount: "100"
+    ),
+    shipping_address: ShippingAddress(
+        address: "Sample Address #2",
+        city: "Dubai"
     )
 )
 
@@ -106,7 +125,7 @@ if modal / sheet / seguway / NavigationLink / ViewController etc - whatever fits
 ```swift
 .sheet(isPresented: $isTabbyOpened, content: {
     TabbyCheckout(productType: openedProduct, onResult: { result in
-        print("TABBY RESULT: \(result)!!!")
+        print("TABBY RESULT: \(result) !")
         switch result {
         case .authorized:
             // Do something else when Tabby authorized customer
@@ -143,7 +162,7 @@ struct CheckoutExampleWithTabby: View {
                 isTabbyOpened = true
             }, label: {
                 HStack {
-                    Text("Your Tabby Installments Button")
+                    Text("My Tabby 'Installments' fancy Button")
                         .font(.headline)
                         .foregroundColor(isTabbyInstallmentsAvailable ? .black : .white)
                 }
@@ -155,7 +174,7 @@ struct CheckoutExampleWithTabby: View {
                 isTabbyOpened = true
             }, label: {
                 HStack {
-                    Text("Your Tabby PayLater Button")
+                    Text("My Tabby 'PayLater' fancy Button")
                         .font(.headline)
                         .foregroundColor(isTabbyPaylatersAvailable ? .black : .white)
                 }
