@@ -7,14 +7,14 @@
 
 import Foundation
 
-struct Buyer: Codable {
+public struct Buyer: Codable {
     let email: String
     let phone: String
     let name: String
     let dob: String?
 }
 
-struct OrderItem: Codable {
+public struct OrderItem: Codable {
     let description: String // 'To be displayed in tabby order information'
     let product_url: String // https://tabby.store/p/SKU123
     let quantity: Int // 1
@@ -23,19 +23,19 @@ struct OrderItem: Codable {
     let unit_price: String // '300'
 }
 
-struct Order: Codable {
+public struct Order: Codable {
     let reference_id: String // #xxxx-xxxxxx-xxxx
     let items: [OrderItem]?
     let shipping_amount: String? // '50'
     let tax_amount: String? // '500'
 }
 
-struct ShippingAddress: Codable {
+public struct ShippingAddress: Codable {
     let address: String
     let city: String
 }
 
-struct Payment: Codable {
+public struct Payment: Codable {
     let amount: String
     let currency: Currency
     let description: String

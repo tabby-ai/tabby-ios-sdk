@@ -22,8 +22,8 @@ struct ActivityIndicator: UIViewRepresentable {
     }
 }
 
-class TabbySDK {
-    typealias SessionCompletion = Result<(sessionId: String, tabbyProductTypes: [TabbyProductType]), CheckoutError>
+public class TabbySDK {
+    public typealias SessionCompletion = Result<(sessionId: String, tabbyProductTypes: [TabbyProductType]), CheckoutError>
     
     public static var shared = TabbySDK()
     
@@ -64,7 +64,7 @@ class TabbySDK {
 }
 
 @available(iOS 13.0, *)
-struct TabbyCheckout: View {
+public struct TabbyCheckout: View {
     @StateObject var checkout = TabbyCheckoutViewModel()
     
     public var productType: TabbyProductType

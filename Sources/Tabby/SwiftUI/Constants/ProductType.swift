@@ -7,7 +7,7 @@
 
 import Foundation
 
-enum ProductType: String, Decodable {
+public enum ProductType: String, Decodable {
     case payLater = "pay_later"
     case installments = "installments"
 }

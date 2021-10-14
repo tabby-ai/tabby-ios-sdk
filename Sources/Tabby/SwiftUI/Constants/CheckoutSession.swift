@@ -35,12 +35,12 @@ public enum TabbyResult: String {
     case rejected = "rejected"
 }
 
-enum TabbyProductType: String, Codable {
+public enum TabbyProductType: String, Codable {
     case installments = "installments"
     case pay_later = "pay_later"
 }
 
-struct TabbyCheckoutPayload: Codable {
+public struct TabbyCheckoutPayload: Codable {
     let merchant_code: String
     let lang: Lang
     let payment: Payment

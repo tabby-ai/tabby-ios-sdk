@@ -7,7 +7,7 @@
 
 import Foundation
 
-enum CheckoutError: Error {
+public enum CheckoutError: Error {
     case invalidUrl
     case invalidResponse
     case invalidData
