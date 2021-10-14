@@ -70,7 +70,7 @@ public struct TabbyCheckout: View {
     public var productType: TabbyProductType
     public var onResult: (TabbyResult) -> ()
     
-    init(productType: TabbyProductType, onResult: @escaping (TabbyResult) -> ()) {
+    public init(productType: TabbyProductType, onResult: @escaping (TabbyResult) -> ()) {
         self.productType = productType
         self.onResult = onResult
     }
