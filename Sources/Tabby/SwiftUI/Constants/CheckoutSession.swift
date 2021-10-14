@@ -44,6 +44,12 @@ public struct TabbyCheckoutPayload: Codable {
     public let merchant_code: String
     public let lang: Lang
     public let payment: Payment
+    
+    public init(merchant_code: String, lang: Lang, payment: Payment) {
+        self.merchant_code = merchant_code
+        self.lang = lang
+        self.payment = payment
+    }
 }
 
 struct PaymentResult: Decodable {
