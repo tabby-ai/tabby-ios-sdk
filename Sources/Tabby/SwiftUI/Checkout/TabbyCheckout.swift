@@ -118,7 +118,7 @@ public struct TabbyCheckout: View {
         }
     }
     
-    var body: some View {
+    public var body: some View {
         HStack {
             if(productType == .installments) {
                 CheckoutWebView(
