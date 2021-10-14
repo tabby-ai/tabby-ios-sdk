@@ -41,9 +41,9 @@ public enum TabbyProductType: String, Codable {
 }
 
 public struct TabbyCheckoutPayload: Codable {
-    let merchant_code: String
-    let lang: Lang
-    let payment: Payment
+    public let merchant_code: String
+    public let lang: Lang
+    public let payment: Payment
 }
 
 struct PaymentResult: Decodable {
