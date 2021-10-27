@@ -10,10 +10,7 @@ import Foundation
 final class Api {
     static let shared = Api()
     
-    static let tabbyApiHost = "https://api.tabby.ai/api/v2"
-    static let tabbyCheckoutHost = "https://checkout.tabby.ai/"
-    
-    private let createSessionUrl = tabbyApiHost + "/checkout"
+    private let createSessionUrl = "https://api.tabby.ai/api/v2/checkout"
     
     private init() {}
     
