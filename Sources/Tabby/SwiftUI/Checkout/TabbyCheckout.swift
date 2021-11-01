@@ -23,7 +23,7 @@ struct ActivityIndicator: UIViewRepresentable {
 }
 
 public class TabbySDK {
-    public typealias SessionCompletion = Result<(sessionId: String, tabbyProductTypes: [TabbyProductType]), CheckoutError>
+    public typealias SessionCompletion = Result<(sessionId: String, paymentId: String, tabbyProductTypes: [TabbyProductType]), CheckoutError>
     
     public static var shared = TabbySDK()
     
@@ -48,8 +48,9 @@ public class TabbySDK {
                     if s.configuration.availableProducts["pay_later"] != nil {
                         tabbyProductTypes.append(.pay_later)
                     }
-                    let res: (sessionId: String, tabbyProductTypes: [TabbyProductType]) = (
+                    let res: (sessionId: String, paymentId: String, tabbyProductTypes: [TabbyProductType]) = (
                         sessionId: s.id,
+                        paymentId: s.payment.id,
                         tabbyProductTypes: tabbyProductTypes
                     )
                     completion(.success(res))
