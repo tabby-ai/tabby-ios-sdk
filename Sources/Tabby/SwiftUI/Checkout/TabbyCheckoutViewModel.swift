@@ -21,6 +21,9 @@ final class TabbyCheckoutViewModel: UIViewController, WKScriptMessageHandlerWith
                 case "close":
                     self.result = .close
                     break
+                case "expired":
+                    self.result = .expired
+                    break
                 case "authorized":
                     self.result = .authorized
                     break

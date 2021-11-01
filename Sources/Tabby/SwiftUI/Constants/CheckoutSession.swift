@@ -38,6 +38,7 @@ public enum TabbyResult: String {
     case close = "close"
     case authorized = "authorized"
     case rejected = "rejected"
+    case expired = "expired"
 }
 
 public enum TabbyProductType: String, Codable {
