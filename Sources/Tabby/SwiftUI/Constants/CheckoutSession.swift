@@ -10,6 +10,11 @@ import Foundation
 struct CheckoutSession: Codable {
     var id: String
     var configuration: Configuration
+    var payment: CheckoutPayment
+}
+
+struct CheckoutPayment: Codable {
+    var id: String
 }
 
 struct Configuration: Codable {
