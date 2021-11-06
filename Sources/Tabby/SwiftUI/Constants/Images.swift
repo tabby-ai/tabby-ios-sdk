@@ -17,8 +17,8 @@ public enum Images {
 
 let imgUrls: [Images:String] = [
     Images.logo: "https://cdn.tabby.ai/assets/logoimg.png",
-    Images.round1:  "https://cdn.tabby.ai/assets/Round1.png",
-    Images.round2: "https://cdn.tabby.ai/assets/Round2.png",
-    Images.round3: "https://cdn.tabby.ai/assets/Round3.png",
-    Images.round4: "https://cdn.tabby.ai/assets/Round4.png"
+    Images.round1:  "https://cdn.tabby.ai/assets/R1-black.png",
+    Images.round2: "https://cdn.tabby.ai/assets/R2-black.png",
+    Images.round3: "https://cdn.tabby.ai/assets/R3-black.png",
+    Images.round4: "https://cdn.tabby.ai/assets/R4-black.png"
 ]
