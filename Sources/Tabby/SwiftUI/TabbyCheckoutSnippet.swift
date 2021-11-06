@@ -9,12 +9,7 @@ import SwiftUI
 
 @available(iOS 13.0, macOS 11, *)
 struct TabbyCheckoutSnippet: View {
-    @State private var isOpened: Bool = false
     @Environment(\.layoutDirection) var direction
-    
-    func toggleOpen() -> Void {
-        isOpened.toggle()
-    }
     
     let amount: Double
     let currency: Currency
@@ -27,7 +22,6 @@ struct TabbyCheckoutSnippet: View {
     
     public var body: some View {
         let isRTL = direction == .rightToLeft
-        let title = !isRTL ? STRINGS_EN["title"]! : STRINGS_AR["title"]!
         let noFees = !isRTL ? STRINGS_EN["noFees"]! : STRINGS_AR["noFees"]!
         let chunkAmount = !isRTL
             ? Text("\(amount/4, specifier: "%.2f") \(currency.rawValue)")
@@ -35,14 +29,6 @@ struct TabbyCheckoutSnippet: View {
         
         return ZStack {
             VStack(alignment: .leading) {
-                HStack (alignment: .top) {
-                    Text("\(title) \(amount/4, specifier: "%.2f") \(currency.rawValue)")
-                        .foregroundColor(textPrimaryColor)
-                        .font(.subheadline)
-                        .frame(width: .infinity)
-                    Spacer()
-                    Logo()
-                }
                 Text(noFees)
                     .foregroundColor(textSecondaryColor)
                     .font(.footnote)
@@ -134,17 +120,10 @@ struct TabbyCheckoutSnippet: View {
             .padding(.horizontal, 16)
             .padding(.vertical, 24)
             .background(Color(.white))
-            .cornerRadius(8)
-            .shadow(color: Color(red: 0, green: 0, blue: 0, opacity: 0.25), radius: 3, x: 0, y: 2)
-            
+//            .cornerRadius(8)
             .padding(.horizontal, 16)
-            .onTapGesture {
-                toggleOpen()
-            }
-        }.sheet(isPresented: $isOpened, content: {
-            SafariView(lang: isRTL ? Lang.ar : Lang.en)
-//                .ignoresSafeArea(.all)
-        })
+//            .shadow(color: Color(red: 0, green: 0, blue: 0, opacity: 0.25), radius: 3, x: 0, y: 2)
+        }
     }
 }
 
@@ -160,5 +139,6 @@ struct InstallmentSnippetView_Preview: PreviewProvider {
                 .environment(\.layoutDirection, .rightToLeft)
                 .previewDisplayName("Right to Left")
         }
+        .preferredColorScheme(.light)
     }
 }
