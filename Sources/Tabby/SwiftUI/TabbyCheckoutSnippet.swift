@@ -9,19 +9,18 @@ import SwiftUI
 
 @available(iOS 13.0, macOS 11, *)
 public struct TabbyCheckoutSnippet: View {
-    @Environment(\.layoutDirection) var direction
-    
     let amount: Double
     let currency: Currency
+    let lang: Lang
     
-    public init(amount: Double, currency: Currency) {
+    public init(amount: Double, currency: Currency, lang: Lang) {
         self.amount = amount
         self.currency = currency
-        print(direction)
+        self.lang = lang
     }
     
     public var body: some View {
-        let isRTL = direction == .rightToLeft
+        let isRTL = lang == .ar
         let noFees = !isRTL ? STRINGS_EN["noFees"]! : STRINGS_AR["noFees"]!
         let chunkAmount = !isRTL
             ? Text("\(amount/4, specifier: "%.2f") \(currency.rawValue)")
@@ -42,7 +41,7 @@ public struct TabbyCheckoutSnippet: View {
                         VStack(alignment: .leading) {
                             ZStack{
                                 Round1()
-                                    .rotationEffect(.degrees(direction == .rightToLeft ? 90 : 0))
+                                    .rotationEffect(.degrees(lang == .ar ? 90 : 0))
                             }
                             .frame(width: 22, height: 22, alignment: /*@START_MENU_TOKEN@*/.center/*@END_MENU_TOKEN@*/)
                             .background(Color(.white))
@@ -79,7 +78,7 @@ public struct TabbyCheckoutSnippet: View {
                         VStack(alignment: .leading) {
                             ZStack {
                                 Round3()
-                                    .rotationEffect(.degrees(direction == .rightToLeft ? -90 : 0))
+                                    .rotationEffect(.degrees(lang == .ar ? -90 : 0))
                             }
                             .frame(width: 22, height: 22, alignment: /*@START_MENU_TOKEN@*/.center/*@END_MENU_TOKEN@*/)
                             .background(Color(.white))
@@ -123,6 +122,7 @@ public struct TabbyCheckoutSnippet: View {
 //            .cornerRadius(8)
             .padding(.horizontal, 16)
 //            .shadow(color: Color(red: 0, green: 0, blue: 0, opacity: 0.25), radius: 3, x: 0, y: 2)
+            .environment(\.layoutDirection, lang == .ar ? .rightToLeft : .leftToRight)
         }
     }
 }
@@ -131,13 +131,8 @@ public struct TabbyCheckoutSnippet: View {
 struct InstallmentSnippetView_Preview: PreviewProvider {
     static var previews: some View {
         VStack{
-            TabbyCheckoutSnippet(amount: 350, currency: .AED)
-//                .preferredColorScheme(.light)
-            
-            TabbyCheckoutSnippet(amount: 800, currency: .AED)
-//                .preferredColorScheme(.light)
-                .environment(\.layoutDirection, .rightToLeft)
-                .previewDisplayName("Right to Left")
+            TabbyCheckoutSnippet(amount: 350, currency: .AED, lang: .en)
+            TabbyCheckoutSnippet(amount: 800, currency: .AED, lang: .ar)
         }
         .preferredColorScheme(.light)
     }
