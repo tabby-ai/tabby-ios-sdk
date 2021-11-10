@@ -132,7 +132,7 @@ struct InstallmentSnippetView_Preview: PreviewProvider {
     static var previews: some View {
         VStack{
             TabbyCheckoutSnippet(amount: 350, currency: .AED, lang: .en)
-            TabbyCheckoutSnippet(amount: 800, currency: .AED, lang: .ar)
+            TabbyCheckoutSnippet(amount: 350, currency: .AED, lang: .ar)
         }
         .preferredColorScheme(.light)
     }

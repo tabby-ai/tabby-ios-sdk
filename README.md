@@ -243,9 +243,43 @@ class ViewController: UIViewController {
 }
 ```
 
-![UIKit](./docs/UIKit.png)
+<!-- ![UIKit](./docs/UIKit.png) -->
 
 ## Result
 
 ![Snippet EN](./docs/TabbyPresentationSnippet_EN.gif)
 ![Snippet AR](./docs/TabbyPresentationSnippet_AR.gif)
+
+### TabbyCheckoutSnippet
+
+```swift
+import UIKit
+import SwiftUI
+import Tabby
+
+class ViewController: UIViewController {
+
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        if #available(iOS 13.0, *) {
+            let vc = UIHostingController(
+                rootView: Tabby.TabbyCheckoutSnippet(
+                    amount: 350,
+                    currency: .AED,
+                    lang: Lang.en)
+            )
+            addChild(vc)
+            vc.view.frame = view.frame
+            view.addSubview(vc.view)
+            vc.didMove(toParent: self)
+        } else {
+            // Fallback on earlier versions
+        }
+    }
+}
+```
+
+## Result
+
+![Snippet EN](./docs/TabbyCheckoutSnippet_EN.gif)
+![Snippet AR](./docs/TabbyCheckoutSnippet_AR.gif)
