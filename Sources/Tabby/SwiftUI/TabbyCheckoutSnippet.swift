@@ -8,7 +8,7 @@
 import SwiftUI
 
 @available(iOS 13.0, macOS 11, *)
-struct TabbyCheckoutSnippet: View {
+public struct TabbyCheckoutSnippet: View {
     @Environment(\.layoutDirection) var direction
     
     let amount: Double
@@ -131,11 +131,11 @@ struct TabbyCheckoutSnippet: View {
 struct InstallmentSnippetView_Preview: PreviewProvider {
     static var previews: some View {
         VStack{
-            TabbyCheckoutSnippet(amount: 800, currency: .AED)
-                .preferredColorScheme(.light)
+            TabbyCheckoutSnippet(amount: 350, currency: .AED)
+//                .preferredColorScheme(.light)
             
             TabbyCheckoutSnippet(amount: 800, currency: .AED)
-                .preferredColorScheme(.light)
+//                .preferredColorScheme(.light)
                 .environment(\.layoutDirection, .rightToLeft)
                 .previewDisplayName("Right to Left")
         }
