@@ -89,7 +89,7 @@ in your CartScreenView etc in .onAppear or viewDidLoad
 
 ### 3. Launch Tabby checkout
 
-SDK is built for your convenience - one `TabbySDK.shared.configure(forPayment: myTestPayment) { result in ... }` is called - you can render something like this
+SDK is built for your convenience - once `TabbySDK.shared.configure(forPayment: myTestPayment) { result in ... }` is called - you can render something like this
 if modal / sheet / seguway / NavigationLink / ViewController etc - whatever fits your UI and app structure. With both SwiftUI and UIKit
 
 ```swift
@@ -281,5 +281,5 @@ class ViewController: UIViewController {
 
 ## Result
 
-![Snippet EN](./docs/TabbyCheckoutSnippet_EN.gif)
-![Snippet AR](./docs/TabbyCheckoutSnippet_AR.gif)
+![Snippet EN](./docs/TabbyCheckoutSnippet_EN.png)
+![Snippet AR](./docs/TabbyCheckoutSnippet_AR.png)
