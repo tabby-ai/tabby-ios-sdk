@@ -17,46 +17,14 @@ dependencies: [
 
 ```
 
-```swift
-import UIKit
-import SwiftUI
-import Tabby
-
-class ViewController: UIViewController {
-
-    override func viewDidLoad() {
-        super.viewDidLoad()
-        if #available(iOS 13.0, *) {
-            let vc = UIHostingController(
-                rootView: Tabby.TabbyPresentationSnippet(
-                    amount: 800,
-                    currency: .AED,
-                    lang: Lang.en)
-            )
-            addChild(vc)
-            vc.view.frame = view.frame
-            view.addSubview(vc.view)
-            vc.didMove(toParent: self)
-        } else {
-            // Fallback on earlier versions
-        }
-    }
-}
-```
-
-![UIKit](./docs/UIKit.png)
-
-## Result
-
-![Snippet EN](./docs/TabbyPresentationSnippet_EN.gif)
-![Snippet AR](./docs/TabbyPresentationSnippet_AR.gif)
-
 ## SDK usage
 
-### 1.  Init Tabby when your app starts (AppDelegete or @main)
+### 1. Init Tabby when your app starts (AppDelegete or @main)
+
 `TabbySDK.shared.setup(withApiKey: "__API_KEY_HERE__")`
 
-### 2.  Prepare view
+### 2. Prepare view
+
 ```swift
 import Tabby
 
@@ -92,14 +60,16 @@ let customerPayment = Payment(
 let myTestPayment = TabbyCheckoutPayload(merchant_code: "ae", lang: .en, payment: customerPayment)
 
 ...
-in your CartScreenView etc in .onAppear or viewDidLoad 
+in your CartScreenView etc in .onAppear or viewDidLoad
 ...
 .onAppear() {
     TabbySDK.shared.configure(forPayment: myTestPayment) { result in
         switch result {
         case .success(let s):
-            // 1. Do something sith sessionId (this step is optional)
-            print("sessionid: \(s.sessionId)")
+            // 1. Do something with sessionId (this step is optional)
+            print("sessionId: \(s.sessionId)")
+            // 2. Do something with paymentId (this step is optional)
+            print("paymentId: \(s.paymentId)")
             // 2. Grab avaibable products from session and enable proper
             // payment method buttons in your UI (this step is required)
             print("tabby available products: \(s.tabbyProductTypes)")
@@ -119,8 +89,8 @@ in your CartScreenView etc in .onAppear or viewDidLoad
 
 ### 3. Launch Tabby checkout
 
-SDK is built for your convenience - one `TabbySDK.shared.configure(forPayment: myTestPayment) { result in ... }`  is called - you can render something like this
-if modal / sheet / seguway / NavigationLink / ViewController etc - whatever fits your UI and app structure. With both SwiftUI and UIKit 
+SDK is built for your convenience - one `TabbySDK.shared.configure(forPayment: myTestPayment) { result in ... }` is called - you can render something like this
+if modal / sheet / seguway / NavigationLink / ViewController etc - whatever fits your UI and app structure. With both SwiftUI and UIKit
 
 ```swift
 .sheet(isPresented: $isTabbyOpened, content: {
@@ -129,6 +99,7 @@ if modal / sheet / seguway / NavigationLink / ViewController etc - whatever fits
         switch result {
         case .authorized:
             // Do something else when Tabby authorized customer
+            // probably navigation back to Home screen, refetching, etc.
             self.isTabbyOpened = false
             break
         case .rejected:
@@ -137,6 +108,12 @@ if modal / sheet / seguway / NavigationLink / ViewController etc - whatever fits
             break
         case .close:
             // Do something else when customer closed Tabby checkout
+            self.isTabbyOpened = false
+            break
+        case .expired:
+            // Do something else when session expired
+            // We strongly recommend to create new session here by calling
+            // TabbySDK.shared.configure(forPayment: myTestPayment) { result in ... }
             self.isTabbyOpened = false
             break
         }
@@ -151,10 +128,10 @@ if modal / sheet / seguway / NavigationLink / ViewController etc - whatever fits
 struct CheckoutExampleWithTabby: View {
     @State var isTabbyInstallmentsAvailable = false
     @State var isTabbyPaylatersAvailable = false
-    
+
     @State var openedProduct: TabbyProductType = .installments
     @State var isTabbyOpened: Bool = false
-    
+
     var body: some View {
         VStack {
             Button(action: {
@@ -168,7 +145,7 @@ struct CheckoutExampleWithTabby: View {
                 }
             })
             .disabled(!isTabbyInstallmentsAvailable)
-            
+
             Button(action: {
                 openedProduct = .pay_later
                 isTabbyOpened = true
@@ -180,7 +157,7 @@ struct CheckoutExampleWithTabby: View {
                 }
             })
             .disabled(!isTabbyPaylatersAvailable)
-            
+
         }
         .sheet(isPresented: $isTabbyOpened, content: {
             TabbyCheckout(productType: openedProduct, onResult: { result in
@@ -188,6 +165,7 @@ struct CheckoutExampleWithTabby: View {
                 switch result {
                 case .authorized:
                     // Do something else when Tabby authorized customer
+                    // probably navigation back to Home screen, refetching, etc.
                     self.isTabbyOpened = false
                     break
                 case .rejected:
@@ -198,6 +176,12 @@ struct CheckoutExampleWithTabby: View {
                     // Do something else when customer closed Tabby checkout
                     self.isTabbyOpened = false
                     break
+                case .expired:
+                    // Do something else when session expired
+                    // We strongly recommend to create new session here by calling
+                    // TabbySDK.shared.configure(forPayment: myTestPayment) { result in ... }
+                    self.isTabbyOpened = false
+                    break
                 }
             })
         })
@@ -205,8 +189,10 @@ struct CheckoutExampleWithTabby: View {
             TabbySDK.shared.configure(forPayment: myTestPayment) { result in
                 switch result {
                 case .success(let s):
-                    // 1. Do something sith sessionId (this step is optional)
-                    print("sessionid: \(s.sessionId)")
+                    // 1. Do something with sessionId (this step is optional)
+                    print("sessionId: \(s.sessionId)")
+                    // 2. Do something with paymentId (this step is optional)
+                    print("paymentId: \(s.paymentId)")
                     // 2. Grab avaibable products from session and enable proper
                     // payment method buttons in your UI (this step is required)
                     print("tabby available products: \(s.tabbyProductTypes)")
@@ -225,3 +211,41 @@ struct CheckoutExampleWithTabby: View {
     }
 }
 ```
+
+## Snippets usage
+
+### TabbyPresentationSnippet
+
+```swift
+import UIKit
+import SwiftUI
+import Tabby
+
+class ViewController: UIViewController {
+
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        if #available(iOS 13.0, *) {
+            let vc = UIHostingController(
+                rootView: Tabby.TabbyPresentationSnippet(
+                    amount: 800,
+                    currency: .AED,
+                    lang: Lang.en)
+            )
+            addChild(vc)
+            vc.view.frame = view.frame
+            view.addSubview(vc.view)
+            vc.didMove(toParent: self)
+        } else {
+            // Fallback on earlier versions
+        }
+    }
+}
+```
+
+![UIKit](./docs/UIKit.png)
+
+## Result
+
+![Snippet EN](./docs/TabbyPresentationSnippet_EN.gif)
+![Snippet AR](./docs/TabbyPresentationSnippet_AR.gif)
