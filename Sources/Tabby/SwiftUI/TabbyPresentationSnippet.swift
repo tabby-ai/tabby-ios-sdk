@@ -10,7 +10,7 @@ import SwiftUI
 let SPACE = " "
 
 @available(iOS 13.0, macOS 11, *)
-public struct TabbyPresentationSnippet: View {
+public struct TabbyProductPageSnippet: View {
     @State private var isOpened: Bool = false
 
     func toggleOpen() -> Void {
@@ -95,12 +95,12 @@ public struct TabbyPresentationSnippet: View {
 }
 
 @available(iOS 14.0, macOS 11, *)
-struct TabbyPresentationSnippet_Previews: PreviewProvider {
+struct TabbyProductPageSnippet_Previews: PreviewProvider {
     static var previews: some View {
         VStack {
-            TabbyPresentationSnippet(amount: 1990, currency: .SAR, lang: Lang.en)
+            TabbyProductPageSnippet(amount: 1990, currency: .SAR, lang: Lang.en)
                 .preferredColorScheme(.light)
-            TabbyPresentationSnippet(amount: 1990, currency: .SAR, lang: Lang.ar)
+            TabbyProductPageSnippet(amount: 1990, currency: .SAR, lang: Lang.ar)
                 .preferredColorScheme(.light)
                 .environment(\.layoutDirection, .rightToLeft)
         }
