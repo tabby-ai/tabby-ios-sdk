@@ -121,6 +121,8 @@ if modal / sheet / seguway / NavigationLink / ViewController etc - whatever fits
 })
 ```
 
+![Checkout](./docs/Checkout.gif)
+
 ### Full example code goes here
 
 ```swift
@@ -211,6 +213,8 @@ struct CheckoutExampleWithTabby: View {
     }
 }
 ```
+
+![Checkout](./docs/Checkout.png)
 
 ## Snippets usage
 
