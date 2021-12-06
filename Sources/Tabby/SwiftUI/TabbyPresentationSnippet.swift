@@ -20,11 +20,13 @@ public struct TabbyProductPageSnippet: View {
     let amount: Double
     let currency: Currency
     let lang: Lang
+    let url: String?
 
-    public init(amount: Double, currency: Currency, lang: Lang) {
+    public init(amount: Double, currency: Currency, lang: Lang, url: String? = nil) {
         self.amount = amount
         self.currency = currency
         self.lang = lang
+        self.url = url
     }
 
 
@@ -89,7 +91,7 @@ public struct TabbyProductPageSnippet: View {
             }
         }
         .sheet(isPresented: $isOpened, content: {
-            SafariView(lang: isRTL ? Lang.ar : Lang.en)
+            SafariView(lang: isRTL ? Lang.ar : Lang.en, customUrl: self.url)
         })
     }
 }

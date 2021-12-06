@@ -13,11 +13,14 @@ struct SafariView: UIViewControllerRepresentable {
     let lang: Lang
     let link: String
     let url: URL?
+    let customUrl: String?
     
-    init(lang: Lang) {
+    init(lang: Lang, customUrl: String? = nil) {
         self.lang = lang
         self.link = lang == Lang.en ? webViewUrls[.en]! : webViewUrls[.ar]!
-        self.url = URL(string: self.link)
+        let finalUrl = customUrl ?? self.link
+        self.url = URL(string: finalUrl)
+        self.customUrl = customUrl
     }
     
     func makeUIViewController(context: UIViewControllerRepresentableContext<SafariView>) -> SFSafariViewController {
