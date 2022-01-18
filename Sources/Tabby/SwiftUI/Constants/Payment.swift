@@ -13,7 +13,7 @@ public struct Buyer: Codable {
     public let name: String
     public let dob: String?
     
-    public init(email: String, phone: String, name: String, dob: String?) {
+    public init(email: String, phone: String, name: String, dob: String? = nil) {
         self.email = email
         self.phone = phone
         self.name = name
@@ -71,7 +71,7 @@ public struct Payment: Codable {
     public let order: Order?
     public let shipping_address: ShippingAddress?
     
-    public init(amount: String, currency: Currency, description: String, buyer: Buyer, order: Order?, shipping_address: ShippingAddress?) {
+    public init(amount: String, currency: Currency, description: String, buyer: Buyer, order: Order? = nil, shipping_address: ShippingAddress? = nil) {
         self.amount = amount
         self.currency = currency
         self.description = description

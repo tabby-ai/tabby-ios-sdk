@@ -17,8 +17,8 @@ public struct TabbyCheckoutSnippet: View {
         self.amount = amount
         self.currency = currency
         self.lang = lang
-    }
-    
+    }  
+  
     public var body: some View {
         let isRTL = lang == .ar
         let noFees = !isRTL ? STRINGS_EN["noFees"]! : STRINGS_AR["noFees"]!

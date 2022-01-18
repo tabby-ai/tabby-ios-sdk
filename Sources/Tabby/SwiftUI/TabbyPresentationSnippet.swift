@@ -29,7 +29,7 @@ public struct TabbyProductPageSnippet: View {
         self.url = url
     }
 
-
+    // MARK: - body
     public var body: some View {
         let isRTL = lang == Lang.ar
         let titleEN = STRINGS_EN["presentation"]!
@@ -95,6 +95,8 @@ public struct TabbyProductPageSnippet: View {
         })
     }
 }
+
+// MARK: - PREVIEW
 
 @available(iOS 14.0, macOS 11, *)
 struct TabbyProductPageSnippet_Previews: PreviewProvider {
