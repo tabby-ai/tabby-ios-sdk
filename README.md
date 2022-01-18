@@ -12,7 +12,7 @@ Xcode 12.0+
 
 ```
 dependencies: [
-    .package(url: "https://github.com/tabby-ai/tabby-ios-sdk.git", .upToNextMajor(from: "0.0.1"))
+    .package(url: "https://github.com/tabby-ai/tabby-ios-sdk.git", .upToNextMajor(from: "1.0.0"))
 ]
 
 ```
@@ -195,12 +195,15 @@ struct CheckoutExampleWithTabby: View {
                     print("sessionId: \(s.sessionId)")
                     // 2. Do something with paymentId (this step is optional)
                     print("paymentId: \(s.paymentId)")
-                    // 2. Grab avaibable products from session and enable proper
+                    // 3. Grab avaibable products from session and enable proper
                     // payment method buttons in your UI (this step is required)
+                    // Feel free to ignore products you don't need or don't want to handle in your App
                     print("tabby available products: \(s.tabbyProductTypes)")
+                    // If you want to handle installments product - check for .installments in response 
                     if (s.tabbyProductTypes.contains(.installments)) {
                         self.isTabbyInstallmentsAvailable = true
                     }
+                    // If you want to handle pay_later product - check for .pay_later in response
                     if (s.tabbyProductTypes.contains(.pay_later)) {
                         self.isTabbyPaylatersAvailable = true
                     }
