@@ -10,6 +10,7 @@ import Foundation
 let STRINGS_EN = [
     "title": "4 interest-free payments of",
     "noFees": "No fees. Pay with any card.",
+    "noFeesCreditCard": "No fees. Pay with any credit card.",
     "today": "Today",
     "in1Month": "In 1 month",
     "in2Months": "In 2 months",
@@ -21,6 +22,7 @@ let STRINGS_EN = [
 let STRINGS_AR = [
     "title": "قسمها على ٤ دفعات شهرية بقيمة",
     "noFees": "ةقاطب يأ مادختساب عفدا .موسر نودب.",
+    "noFeesCreditCard": "ةقاطب يأ مادختساب عفدا .موسر نودب.",
     "today": "مويلا",
     "in1Month": "رهش دعب",
     "in2Months": "نيرهش دعب",
