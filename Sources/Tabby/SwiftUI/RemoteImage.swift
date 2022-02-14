@@ -88,7 +88,7 @@ struct Round1: View {
   var body: some View {
     ImageView(withURL: imgUrls[.round1]!, loaded: $loaded)
       .scaledToFit()
-      .frame(width: 22, height: 22)
+      .frame(width: 40, height: 40)
       .overlay(
         Group {
           if (loaded) {
@@ -96,8 +96,8 @@ struct Round1: View {
           } else {
             Rectangle()
               .foregroundColor(.gray)
-              .frame(width: 22, height: 22)
-              .cornerRadius(11)
+              .frame(width: 40, height: 40)
+              .cornerRadius(40/2)
           }
         }
       )
@@ -111,7 +111,7 @@ struct Round2: View {
   var body: some View {
     ImageView(withURL: imgUrls[.round2]!, loaded: $loaded)
       .scaledToFit()
-      .frame(width: 22, height: 22)
+      .frame(width: 40, height: 40)
       .overlay(
         Group {
           if (loaded) {
@@ -119,8 +119,8 @@ struct Round2: View {
           } else {
             Rectangle()
               .foregroundColor(.gray)
-              .frame(width: 22, height: 22)
-              .cornerRadius(11)
+              .frame(width: 40, height: 40)
+              .cornerRadius(40/2)
           }
         }
       )
@@ -134,7 +134,7 @@ struct Round3: View {
   var body: some View {
     ImageView(withURL: imgUrls[.round3]!, loaded: $loaded)
       .scaledToFit()
-      .frame(width: 22, height: 22)
+      .frame(width: 40, height: 40)
       .overlay(
         Group {
           if (loaded) {
@@ -142,8 +142,8 @@ struct Round3: View {
           } else {
             Rectangle()
               .foregroundColor(.gray)
-              .frame(width: 22, height: 22)
-              .cornerRadius(11)
+              .frame(width: 40, height: 40)
+              .cornerRadius(40/2)
           }
         }
       )
@@ -157,7 +157,7 @@ struct Round4: View {
   var body: some View {
     ImageView(withURL: imgUrls[.round4]!, loaded: $loaded)
       .scaledToFit()
-      .frame(width: 22, height: 22)
+      .frame(width: 40, height: 40)
       .overlay(
         Group {
           if (loaded) {
@@ -165,8 +165,8 @@ struct Round4: View {
           } else {
             Rectangle()
               .foregroundColor(.gray)
-              .frame(width: 22, height: 22)
-              .cornerRadius(11)
+              .frame(width: 40, height: 40)
+              .cornerRadius(40/2)
           }
         }
       )
@@ -179,10 +179,9 @@ struct Logo_Previews: PreviewProvider {
     VStack {
       Logo()
       Round1()
-      Round1()
+      Round2()
       Round3()
       Round4()
-    }
-    
+    }.previewLayout(.sizeThatFits)
   }
 }
