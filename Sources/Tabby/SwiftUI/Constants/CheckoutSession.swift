@@ -44,6 +44,8 @@ public enum TabbyResult: String {
 public enum TabbyProductType: String, Codable {
     case installments = "installments"
     case pay_later = "pay_later"
+    case monthly_billing = "monthly_billing"
+    case credit_card_installments = "credit_card_installments"
 }
 
 public struct TabbyCheckoutPayload: Codable {
