@@ -9,112 +9,163 @@ import SwiftUI
 
 @available(iOS 13.0, macOS 11, *)
 public struct TabbyCheckoutSnippet: View {
+    @Environment(\.layoutDirection) var direction
+    
     let amount: Double
     let currency: Currency
-    let lang: Lang
+    let withCurrencyInArabic: Bool
     
-    public init(amount: Double, currency: Currency, lang: Lang) {
+    public init(amount: Double, currency: Currency, preferCurrencyInArabic: Bool? = nil) {
         self.amount = amount
         self.currency = currency
-        self.lang = lang
-    }  
-  
+        self.withCurrencyInArabic = preferCurrencyInArabic ?? false
+    }
+    
     public var body: some View {
-        let isRTL = lang == .ar
-        let noFees = !isRTL ? STRINGS_EN["noFees"]! : STRINGS_AR["noFees"]!
+        let isRTL = direction == .rightToLeft
+        let noFeesText = String(format: "noFees".localized)
+        let todayText = String(format: "today".localized)
+        let in1MonthText = String(format: "in1Month".localized)
+        let in2MonthsText = String(format: "in2Months".localized)
+        let in3MonthsText = String(format: "in3Months".localized)
+        
         let chunkAmount = !isRTL
-            ? Text("\(amount/4, specifier: "%.2f") \(currency.rawValue)")
-            : Text("\(currency.rawValue) \(amount/4, specifier: "%.2f") ")
+        ? Text("\(amount/4, specifier: "%.2f") \(currency.rawValue)")
+        : Text("\(currency.localized(l: withCurrencyInArabic && isRTL ? .ar : nil)) \(amount/4, specifier: "%.2f") ")
         
         return ZStack {
             VStack(alignment: .leading) {
-                Text(noFees)
+                Text(noFeesText)
                     .foregroundColor(textSecondaryColor)
                     .font(.footnote)
+                    .padding(.horizontal, 4)
                 
                 ZStack (alignment: Alignment(horizontal: .center, vertical: .top)) {
                     Color(red: 172/255, green: 172/255, blue: 182/255, opacity: 1)
-                        .frame(width: .infinity, height: 0.5)
-                        .padding(.top, 11)
+                        .frame(width: .infinity, height: 1)
+                        .padding(.top, 20 - 1)
                     
-                    HStack{
-                        VStack(alignment: .leading) {
-                            ZStack{
+                    HStack {
+                        VStack(alignment: .center) {
+                            HStack(spacing: 1) {
+                                Color(red: 172/255, green: 172/255, blue: 182/255, opacity: 1)
+                                    .frame(width: .infinity, height: 0)
+                                    .padding(.top,  -1)
                                 Round1()
-                                    .rotationEffect(.degrees(lang == .ar ? 90 : 0))
+                                    .rotationEffect(.degrees(isRTL ? 90 : 0))
+                                Color(red: 172/255, green: 172/255, blue: 182/255, opacity: 1)
+                                    .frame(width: .infinity, height: 1)
+                                    .padding(.top,  -1)
                             }
-                            .frame(width: 22, height: 22, alignment: /*@START_MENU_TOKEN@*/.center/*@END_MENU_TOKEN@*/)
-                            .background(Color(.white))
+                            .frame(width: .infinity, height: 40, alignment: /*@START_MENU_TOKEN@*/.center/*@END_MENU_TOKEN@*/)
                             chunkAmount
                                 .bold()
                                 .font(.system(size: 11))
-                                .padding(.top, 16)
+                                .padding(.top, 6)
                                 .foregroundColor(textPrimaryColor)
-                            Text(!isRTL ? STRINGS_EN["today"]! : STRINGS_AR["today"]!)
+                                .multilineTextAlignment(.center)
+                            Text(todayText)
                                 .bold()
                                 .font(.system(size: 11))
                                 .foregroundColor(textSecondaryColor)
                                 .padding(.top, 4)
+                                .multilineTextAlignment(.center)
                         }
+                        .frame(maxWidth: .infinity)
+                        .background(Color.white)
                         Spacer()
-                        VStack(alignment: .leading) {
-                            ZStack {
+                        VStack(alignment: .center) {
+                            HStack(spacing: 1) {
+                                Color(red: 172/255, green: 172/255, blue: 182/255, opacity: 1)
+                                    .frame(width: .infinity, height: 1)
+                                    .padding(.top,  -1)
                                 Round2()
+                                    .rotationEffect(.degrees(isRTL ? 90 : 0))
+                                Color(red: 172/255, green: 172/255, blue: 182/255, opacity: 1)
+                                    .frame(width: .infinity, height: 1)
+                                    .padding(.top,  -1)
                             }
-                            .frame(width: 22, height: 22, alignment: /*@START_MENU_TOKEN@*/.center/*@END_MENU_TOKEN@*/)
+                            .frame(width: .infinity, height: 40, alignment: /*@START_MENU_TOKEN@*/.center/*@END_MENU_TOKEN@*/)
                             .background(Color(.white))
                             chunkAmount
                                 .bold()
                                 .font(.system(size: 11))
-                                .padding(.top, 16)
+                                .padding(.top, 6)
+                                .multilineTextAlignment(.center)
                                 .foregroundColor(textPrimaryColor)
-                            Text(!isRTL ? STRINGS_EN["in1Month"]! : STRINGS_AR["in1Month"]!)
+                            Text(in1MonthText)
                                 .bold()
                                 .font(.system(size: 11))
                                 .foregroundColor(textSecondaryColor)
                                 .padding(.top, 4)
+                                .multilineTextAlignment(.center)
                         }
+                        .frame(maxWidth: .infinity)
+                        .background(Color.white)
                         Spacer()
-                        VStack(alignment: .leading) {
-                            ZStack {
+                        VStack(alignment: .center) {
+                            HStack(spacing: 1) {
+                                Color(red: 172/255, green: 172/255, blue: 182/255, opacity: 1)
+                                    .frame(width: .infinity, height: 1)
+                                    .padding(.top,  -1)
                                 Round3()
-                                    .rotationEffect(.degrees(lang == .ar ? -90 : 0))
+                                    .rotationEffect(.degrees(isRTL ? 90 : 0))
+                                Color(red: 172/255, green: 172/255, blue: 182/255, opacity: 1)
+                                    .frame(width: .infinity, height: 1)
+                                    .padding(.top,  -1)
                             }
-                            .frame(width: 22, height: 22, alignment: /*@START_MENU_TOKEN@*/.center/*@END_MENU_TOKEN@*/)
+                            .frame(width: .infinity, height: 40, alignment: /*@START_MENU_TOKEN@*/.center/*@END_MENU_TOKEN@*/)
+                            .background(Color(.white))
                             .background(Color(.white))
                             chunkAmount
-                                .bold()
                                 .font(.system(size: 11))
-                                .padding(.top, 16)
+                                .bold()
+                                .padding(.top, 6)
+                                .multilineTextAlignment(.center)
+                                
                                 .foregroundColor(textPrimaryColor)
-                            Text(!isRTL ? STRINGS_EN["in2Months"]! : STRINGS_AR["in2Months"]!)
+                                
+                            Text(in2MonthsText)
                                 .bold()
                                 .font(.system(size: 11))
                                 .foregroundColor(textSecondaryColor)
                                 .padding(.top, 4)
+                                .multilineTextAlignment(.center)
                         }
+                        .frame(maxWidth: .infinity)
+                        .background(Color.white)
                         Spacer()
-                        VStack(alignment: .leading) {
-                            ZStack {
+                        VStack(alignment: .center) {
+                            HStack(spacing: 1) {
+                                Color(red: 172/255, green: 172/255, blue: 182/255, opacity: 1)
+                                    .frame(width: .infinity, height: 1)
+                                    .padding(.top,  -1)
                                 Round4()
+                                    .rotationEffect(.degrees(isRTL ? 90 : 0))
+                                Color(red: 172/255, green: 172/255, blue: 182/255, opacity: 0)
+                                    .frame(width: .infinity, height: 1)
+                                    .padding(.top,  -1)
                             }
-                            .frame(width: 22, height: 22, alignment: /*@START_MENU_TOKEN@*/.center/*@END_MENU_TOKEN@*/)
+                            .frame(width: .infinity, height: 40, alignment: /*@START_MENU_TOKEN@*/.center/*@END_MENU_TOKEN@*/)
                             .background(Color(.white))
                             chunkAmount
                                 .bold()
                                 .font(.system(size: 11))
-                                .padding(.top, 16)
+                                .padding(.top, 6)
+                                .multilineTextAlignment(.center)
                                 .foregroundColor(textPrimaryColor)
-                            Text(!isRTL ? STRINGS_EN["in3Months"]! : STRINGS_AR["in3Months"]!)
+                            Text(in3MonthsText)
                                 .bold()
                                 .font(.system(size: 11))
                                 .foregroundColor(textSecondaryColor)
                                 .padding(.top, 4)
-                        }.background(Color(.white))
+                                .multilineTextAlignment(.center)
+                        }
+                        .frame(maxWidth: .infinity)
+                        .background(Color.white)
                     }
                 }
-                .padding(.top, 24)
-                .padding(.horizontal, 4)
+                .padding(.top, 16)
             }
             .padding(.horizontal, 16)
             .padding(.vertical, 24)
@@ -122,7 +173,7 @@ public struct TabbyCheckoutSnippet: View {
 //            .cornerRadius(8)
             .padding(.horizontal, 16)
 //            .shadow(color: Color(red: 0, green: 0, blue: 0, opacity: 0.25), radius: 3, x: 0, y: 2)
-            .environment(\.layoutDirection, lang == .ar ? .rightToLeft : .leftToRight)
+            .environment(\.layoutDirection, isRTL ? .rightToLeft : .leftToRight)
         }
     }
 }
@@ -131,9 +182,13 @@ public struct TabbyCheckoutSnippet: View {
 struct InstallmentSnippetView_Preview: PreviewProvider {
     static var previews: some View {
         VStack{
-            TabbyCheckoutSnippet(amount: 350, currency: .AED, lang: .en)
-            TabbyCheckoutSnippet(amount: 350, currency: .AED, lang: .ar)
+            TabbyCheckoutSnippet(amount: 5000, currency: .AED)
+                  TabbyCheckoutSnippet(amount: 350, currency: .AED)
+                    .environment(\.layoutDirection, .rightToLeft)
+                  TabbyCheckoutSnippet(amount: 350, currency: .AED, preferCurrencyInArabic: true)
+                    .environment(\.layoutDirection, .rightToLeft)
         }
         .preferredColorScheme(.light)
+//        .previewLayout(.sizeThatFits)
     }
 }
