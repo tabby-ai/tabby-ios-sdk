@@ -9,6 +9,7 @@ import SwiftUI
 
 @available(iOS 13.0, macOS 11, *)
 public struct TabbySplititCheckoutSnippet: View {
+  @Environment(\.layoutDirection) var direction
   @State private var isOpened: Bool = false
   
   func toggleOpen() -> Void {
@@ -17,50 +18,81 @@ public struct TabbySplititCheckoutSnippet: View {
   
   let amount: Double
   let currency: Currency
-  let lang: Lang
-  let url: String?
+  let withCurrencyInArabic: Bool
+  let splitPeriod: Int?
+  var urls: (String, String) = ("", "")
   
-  public init(amount: Double, currency: Currency, lang: Lang, url: String? = nil) {
+  public init(
+    amount: Double,
+    currency: Currency,
+    url: String? = nil,
+    splitPeriod: SplitPeriod? = .of4,
+    preferCurrencyInArabic: Bool? = nil
+  ) {
     self.amount = amount
     self.currency = currency
-    self.lang = lang
-    self.url = url ?? "\(splititWebViewUrls[lang]!)?price=\(amount)&currency=\(currency.rawValue)"
+    self.withCurrencyInArabic = preferCurrencyInArabic ?? false
+    self.splitPeriod = Int(splitPeriod!.rawValue)
+    
+    if let passedUrl = url {
+      self.urls = (passedUrl, passedUrl)
+    } else {
+      let urlEn =  "\(splititWebViewUrls[.en]!)?price=\(amount)&currency=\(currency.rawValue)&splitPeriod=\(Int(splitPeriod!.rawValue))"
+      let urlAr =  "\(splititWebViewUrls[.ar]!)?price=\(amount)&currency=\(currency.rawValue)&splitPeriod=\(Int(splitPeriod!.rawValue))"
+      self.urls = (urlEn, urlAr)
+    }
+    
+    
   }
   
-  // MARK: - BODY
   public var body: some View {
-    let isRTL = lang == Lang.ar
-    let noFees = !isRTL ? STRINGS_EN["noFeesCreditCard"]! : STRINGS_AR["noFeesCreditCard"]!
-    let learnMore = !isRTL ? STRINGS_EN["learnMore"]! : STRINGS_AR["learnMore"]!
+    let isRTL = direction == .rightToLeft
+    print ("isRTL \(isRTL)")
+    let noFeesText = String(format: "noFeesCreditCard".localized)
+    let remainingHeld = String(format: "remainingHeld".localized)
+    let chargedToday = String(format: "chargedToday".localized)
+    let learnMore = String(format: "learnMore".localized)
     
     return ZStack {
       VStack(alignment: .leading) {
         HStack(alignment: .top) {
           VStack(alignment: .leading) {
             VStack(alignment: .leading, spacing: 16) {
-              Text(noFees)
+              Text(noFeesText)
                 .foregroundColor(textPrimaryColor)
                 .font(.footnote)
               
               HStack {
-                VStack(alignment: .leading) {
-                  Text("Charged today")
+                VStack(alignment: .leading, spacing: 4) {
+                  Text(chargedToday)
                     .foregroundColor(textPrimaryColor)
                     .font(.footnote)
                     .bold()
-                  Text("\(amount/4, specifier: "%.2f") \(currency.rawValue)")
-                    .foregroundColor(textPrimaryColor)
-                    .font(.subheadline)
+                  if(isRTL) {
+                    Text("\(currency.rawValue) \(amount/Double(splitPeriod!), specifier: "%.2f")")
+                      .foregroundColor(textPrimaryColor)
+                      .font(.subheadline)
+                  } else {
+                    Text("\(amount/(Double(splitPeriod!)), specifier: "%.2f") \(currency.rawValue)")
+                      .foregroundColor(textPrimaryColor)
+                      .font(.subheadline)
+                  }
                   
                 }
-                VStack(alignment: .leading) {
-                  Text("Remaining held on card")
+                VStack(alignment: .leading, spacing: 4) {
+                  Text(remainingHeld)
                     .foregroundColor(textPrimaryColor)
                     .font(.footnote)
                     .bold()
-                  Text("\(amount/4*3, specifier: "%.2f") \(currency.rawValue)")
-                    .foregroundColor(textPrimaryColor)
-                    .font(.subheadline)
+                  if(isRTL) {
+                    Text("\(currency.rawValue) \(amount/Double(splitPeriod!) * (Double(splitPeriod!) - 1), specifier: "%.2f")")
+                      .foregroundColor(textPrimaryColor)
+                      .font(.subheadline)
+                  } else {
+                    Text("\(amount/Double(splitPeriod!) * (Double(splitPeriod!) - 1), specifier: "%.2f") \(currency.rawValue)")
+                      .foregroundColor(textPrimaryColor)
+                      .font(.subheadline)
+                  }
                 }
               }
               
@@ -70,13 +102,6 @@ public struct TabbySplititCheckoutSnippet: View {
                   .font(.footnote)
                   .bold()
                   .underline()
-                Image(systemName: "arrow.up.forward")
-                  .resizable()
-                  .foregroundColor(iris300Color)
-                  .font(Font.system(size: 10, weight: .bold))
-                  .frame(width: 10, height: 10)
-                
-                
               }
             }
             
@@ -87,19 +112,14 @@ public struct TabbySplititCheckoutSnippet: View {
                  alignment: .leading)
         }
       }
-      .padding(.horizontal, 16)
-      .padding(.vertical, 16)
       .background(Color(.white))
-      .cornerRadius(8)
-      .shadow(color: Color(red: 0, green: 0, blue: 0, opacity: 0.25), radius: 3, x: 0, y: 2)
       .padding(.horizontal, 16)
-      .environment(\.layoutDirection, isRTL ? .rightToLeft : .leftToRight)
       .onTapGesture {
         toggleOpen()
       }
     }
     .sheet(isPresented: $isOpened, content: {
-      SafariView(lang: isRTL ? Lang.ar : Lang.en, customUrl: self.url)
+      SafariView(lang: isRTL ? Lang.ar : Lang.en, customUrl: isRTL ? self.urls.1 : self.urls.0)
     })
   }
 }
@@ -107,6 +127,21 @@ public struct TabbySplititCheckoutSnippet: View {
 @available(iOS 13.0, macOS 11, *)
 struct TabbySplititCheckoutSnippetPreview: PreviewProvider {
   static var previews: some View {
-    TabbySplititCheckoutSnippet(amount: 1990, currency: .AED, lang: Lang.en)
+    VStack {
+      Group {
+        Text("SplitPeriod :: default (4)")
+        TabbySplititCheckoutSnippet(amount: 1990, currency: .AED)
+        TabbySplititCheckoutSnippet(amount: 1990, currency: .AED, preferCurrencyInArabic: true)
+      }
+      Group {
+        Text("SplitPeriod :: default (6)")
+        TabbySplititCheckoutSnippet(amount: 1990, currency: .AED, splitPeriod: .of6)
+        TabbySplititCheckoutSnippet(
+          amount: 1990,
+          currency: .AED,
+          splitPeriod: .of6,
+          preferCurrencyInArabic: true)
+      }
+    }
   }
 }
