@@ -94,7 +94,6 @@ public struct TabbyCheckout: View {
                         break
                     }
                     checkout.installmentsURL = webUrl
-                    checkout.installmentsButtonEnabled = true
                     
                 case "pay_later":
                     guard let products = s.configuration.availableProducts["pay_later"] else {
@@ -111,7 +110,39 @@ public struct TabbyCheckout: View {
                         break
                     }
                     checkout.payLaterURL = webUrl
-                    checkout.paylaterButtonEnabled = true
+                    
+                case "monthly_billing":
+                    guard let products = s.configuration.availableProducts["monthly_billing"] else {
+                        checkout.monthlyBillingURL = ""
+                        break
+                        
+                    }
+                    guard let product = products.first else {
+                        checkout.monthlyBillingURL = ""
+                        break
+                    }
+                    guard let webUrl = product.webUrl as String? else {
+                        checkout.monthlyBillingURL = ""
+                        break
+                    }
+                    checkout.monthlyBillingURL = webUrl
+                    
+                case "credit_card_installments":
+                    guard let products = s.configuration.availableProducts["credit_card_installments"] else {
+                        checkout.creditCardInstallmentsURL = ""
+                        break
+                        
+                    }
+                    guard let product = products.first else {
+                        checkout.creditCardInstallmentsURL = ""
+                        break
+                    }
+                    guard let webUrl = product.webUrl as String? else {
+                        checkout.creditCardInstallmentsURL = ""
+                        break
+                    }
+                    checkout.creditCardInstallmentsURL = webUrl
+                    
                 default:
                     break
                 }
@@ -123,14 +154,12 @@ public struct TabbyCheckout: View {
         HStack {
             if(productType == .installments) {
                 CheckoutWebView(
-                    type: .public,
                     productType: .installments,
                     url: self.checkout.installmentsURL,
                     vc: self.checkout
                 )
             } else if (productType == .pay_later) {
                 CheckoutWebView(
-                    type: .public,
                     productType: .payLater,
                     url: self.checkout.payLaterURL,
                     vc: self.checkout

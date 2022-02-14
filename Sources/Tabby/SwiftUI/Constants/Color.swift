@@ -16,4 +16,6 @@ let textSecondaryColor = Color(red: 84/255, green: 84/255, blue: 92/255, opacity
 @available(iOS 13.0, macOS 10.15, *)
 let tabbyColor = Color(red: 62/255, green: 237/255, blue: 191/255, opacity: 1)
 
+@available(iOS 13.0, macOS 10.15, *)
+let iris300Color = Color(red: 56/255, green: 53/255, blue: 175/255, opacity: 1)
 

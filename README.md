@@ -221,6 +221,14 @@ struct CheckoutExampleWithTabby: View {
 
 ## Snippets usage
 
+### Before you go add to your `Info.plist`. 
+
+```
+<key>CFBundleAllowMixedLocalizations</key>
+<true/>
+```
+This is required to enable Arabic locale in your snippets.
+
 ### TabbyPresentationSnippet
 
 ```swift
@@ -229,15 +237,11 @@ import SwiftUI
 import Tabby
 
 class ViewController: UIViewController {
-
     override func viewDidLoad() {
         super.viewDidLoad()
         if #available(iOS 13.0, *) {
             let vc = UIHostingController(
-                rootView: Tabby.TabbyPresentationSnippet(
-                    amount: 800,
-                    currency: .AED,
-                    lang: Lang.en)
+                rootView: Tabby.TabbyProductPageSnippet(amount: 1990, currency: .SAR)
             )
             addChild(vc)
             vc.view.frame = view.frame
@@ -265,15 +269,11 @@ import SwiftUI
 import Tabby
 
 class ViewController: UIViewController {
-
     override func viewDidLoad() {
         super.viewDidLoad()
         if #available(iOS 13.0, *) {
             let vc = UIHostingController(
-                rootView: Tabby.TabbyCheckoutSnippet(
-                    amount: 350,
-                    currency: .AED,
-                    lang: Lang.en)
+                rootView: Tabby.TabbyCheckoutSnippet(amount: 2000, currency: .AED)
             )
             addChild(vc)
             vc.view.frame = view.frame
