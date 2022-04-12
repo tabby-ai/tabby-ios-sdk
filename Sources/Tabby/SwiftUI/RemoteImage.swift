@@ -64,7 +64,7 @@ struct Logo: View {
     ImageView(withURL: imgUrls[.logo]!, loaded: $loaded)
       .scaledToFit()
       .background(tabbyColor)
-      .frame(width: 45, height: 18)
+      .frame(width: 70, height: 28)
       .cornerRadius(4)
       .overlay(
         Group {
@@ -73,7 +73,7 @@ struct Logo: View {
           } else {
             Rectangle()
               .foregroundColor(tabbyColor)
-              .frame(width: 45, height: 18)
+              .frame(width: 70, height: 28)
               .cornerRadius(4)
           }
         }
