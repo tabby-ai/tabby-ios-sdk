@@ -42,12 +42,12 @@ public class TabbySDK {
                     self.session = s
                     var tabbyProductTypes: [TabbyProductType] = []
                     
-                    if s.configuration.availableProducts["installments"] != nil {
-                        tabbyProductTypes.append(.installments)
+                    for key in TabbyProductType.allCases {
+                        if s.configuration.availableProducts[key.rawValue] != nil {
+                            tabbyProductTypes.append(key)
+                        }
                     }
-                    if s.configuration.availableProducts["pay_later"] != nil {
-                        tabbyProductTypes.append(.pay_later)
-                    }
+
                     let res: (sessionId: String, paymentId: String, tabbyProductTypes: [TabbyProductType]) = (
                         sessionId: s.id,
                         paymentId: s.payment.id,
