@@ -40,8 +40,6 @@ final class Api {
     
     request.httpBody = jsonBody.data(using: String.Encoding.utf8)
     
-    print(createSessionUrl)
-    
     let task = URLSession.shared.dataTask(with: request) { data, response, error in
       if let _ = error {
         completed(.failure(.unableToComplete))

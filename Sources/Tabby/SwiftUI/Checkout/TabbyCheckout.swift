@@ -95,22 +95,6 @@ public struct TabbyCheckout: View {
                     }
                     checkout.payLaterURL = webUrl
                     
-                case "monthly_billing":
-                    guard let products = s.configuration.availableProducts["monthly_billing"] else {
-                        checkout.monthlyBillingURL = ""
-                        break
-                        
-                    }
-                    guard let product = products.first else {
-                        checkout.monthlyBillingURL = ""
-                        break
-                    }
-                    guard let webUrl = product.webUrl as String? else {
-                        checkout.monthlyBillingURL = ""
-                        break
-                    }
-                    checkout.monthlyBillingURL = webUrl
-                    
                 case "credit_card_installments":
                     guard let products = s.configuration.availableProducts["credit_card_installments"] else {
                         checkout.creditCardInstallmentsURL = ""
