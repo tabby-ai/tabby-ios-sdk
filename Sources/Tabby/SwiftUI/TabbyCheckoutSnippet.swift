@@ -48,118 +48,79 @@ public struct TabbyCheckoutSnippet: View {
                     HStack {
                         VStack(alignment: .center) {
                             HStack(spacing: 1) {
-                                Color(red: 172/255, green: 172/255, blue: 182/255, opacity: 1)
-                                    .frame(width: .infinity, height: 0)
-                                    .padding(.top,  -1)
-                                Round1()
+                                DividerLine(visible: false)
+                                SegmentedCircle(img: .circle1)
                                     .rotationEffect(.degrees(isRTL ? 90 : 0))
-                                Color(red: 172/255, green: 172/255, blue: 182/255, opacity: 1)
-                                    .frame(width: .infinity, height: 1)
-                                    .padding(.top,  -1)
+                                DividerLine(visible: true)
                             }
                             .frame(width: .infinity, height: 40, alignment: /*@START_MENU_TOKEN@*/.center/*@END_MENU_TOKEN@*/)
                             chunkAmount
-                                .bold()
-                                .font(.system(size: 11))
-                                .padding(.top, 6)
-                                .foregroundColor(textPrimaryColor)
-                                .multilineTextAlignment(.center)
+                                .modifier(AmountTextStyle())
+                            
                             Text(todayText)
-                                .bold()
-                                .font(.system(size: 11))
-                                .foregroundColor(textSecondaryColor)
-                                .padding(.top, 4)
-                                .multilineTextAlignment(.center)
+                                .modifier(WhenTextStyle())
                         }
                         .frame(maxWidth: .infinity)
                         .background(Color.white)
+                        
                         Spacer()
+                        
                         VStack(alignment: .center) {
                             HStack(spacing: 1) {
-                                Color(red: 172/255, green: 172/255, blue: 182/255, opacity: 1)
-                                    .frame(width: .infinity, height: 1)
-                                    .padding(.top,  -1)
-                                Round2()
-                                    .rotationEffect(.degrees(isRTL ? 90 : 0))
-                                Color(red: 172/255, green: 172/255, blue: 182/255, opacity: 1)
-                                    .frame(width: .infinity, height: 1)
-                                    .padding(.top,  -1)
+                                DividerLine(visible: true)
+                                SegmentedCircle(img: .circle2)
+                                    .rotationEffect(.degrees(isRTL ? 180 : 0))
+                                DividerLine(visible: true)
                             }
                             .frame(width: .infinity, height: 40, alignment: /*@START_MENU_TOKEN@*/.center/*@END_MENU_TOKEN@*/)
                             .background(Color(.white))
                             chunkAmount
-                                .bold()
-                                .font(.system(size: 11))
-                                .padding(.top, 6)
-                                .multilineTextAlignment(.center)
-                                .foregroundColor(textPrimaryColor)
+                                .modifier(AmountTextStyle())
+                            
                             Text(in1MonthText)
-                                .bold()
-                                .font(.system(size: 11))
-                                .foregroundColor(textSecondaryColor)
-                                .padding(.top, 4)
-                                .multilineTextAlignment(.center)
+                                .modifier(WhenTextStyle())
                         }
                         .frame(maxWidth: .infinity)
                         .background(Color.white)
+                        
                         Spacer()
+                        
                         VStack(alignment: .center) {
                             HStack(spacing: 1) {
-                                Color(red: 172/255, green: 172/255, blue: 182/255, opacity: 1)
-                                    .frame(width: .infinity, height: 1)
-                                    .padding(.top,  -1)
-                                Round3()
-                                    .rotationEffect(.degrees(isRTL ? 90 : 0))
-                                Color(red: 172/255, green: 172/255, blue: 182/255, opacity: 1)
-                                    .frame(width: .infinity, height: 1)
-                                    .padding(.top,  -1)
+                                DividerLine(visible: true)
+                                SegmentedCircle(img: .circle3)
+                                    .rotationEffect(.degrees(isRTL ? -90 : 0))
+                                DividerLine(visible: true)
                             }
                             .frame(width: .infinity, height: 40, alignment: /*@START_MENU_TOKEN@*/.center/*@END_MENU_TOKEN@*/)
                             .background(Color(.white))
-                            .background(Color(.white))
+                            
                             chunkAmount
-                                .font(.system(size: 11))
-                                .bold()
-                                .padding(.top, 6)
-                                .multilineTextAlignment(.center)
-                                
-                                .foregroundColor(textPrimaryColor)
-                                
+                                .modifier(AmountTextStyle())
+                            
                             Text(in2MonthsText)
-                                .bold()
-                                .font(.system(size: 11))
-                                .foregroundColor(textSecondaryColor)
-                                .padding(.top, 4)
-                                .multilineTextAlignment(.center)
+                                .modifier(WhenTextStyle())
                         }
                         .frame(maxWidth: .infinity)
                         .background(Color.white)
+                        
                         Spacer()
+                        
                         VStack(alignment: .center) {
                             HStack(spacing: 1) {
-                                Color(red: 172/255, green: 172/255, blue: 182/255, opacity: 1)
-                                    .frame(width: .infinity, height: 1)
-                                    .padding(.top,  -1)
-                                Round4()
+                                DividerLine(visible: true)
+                                SegmentedCircle(img: .circle4)
                                     .rotationEffect(.degrees(isRTL ? 90 : 0))
-                                Color(red: 172/255, green: 172/255, blue: 182/255, opacity: 0)
-                                    .frame(width: .infinity, height: 1)
-                                    .padding(.top,  -1)
+                                DividerLine(visible: false)
                             }
                             .frame(width: .infinity, height: 40, alignment: /*@START_MENU_TOKEN@*/.center/*@END_MENU_TOKEN@*/)
                             .background(Color(.white))
+                            
                             chunkAmount
-                                .bold()
-                                .font(.system(size: 11))
-                                .padding(.top, 6)
-                                .multilineTextAlignment(.center)
-                                .foregroundColor(textPrimaryColor)
+                                .modifier(AmountTextStyle())
+                            
                             Text(in3MonthsText)
-                                .bold()
-                                .font(.system(size: 11))
-                                .foregroundColor(textSecondaryColor)
-                                .padding(.top, 4)
-                                .multilineTextAlignment(.center)
+                                .modifier(WhenTextStyle())
                         }
                         .frame(maxWidth: .infinity)
                         .background(Color.white)
@@ -170,11 +131,20 @@ public struct TabbyCheckoutSnippet: View {
             .padding(.horizontal, 16)
             .padding(.vertical, 24)
             .background(Color(.white))
-//            .cornerRadius(8)
             .padding(.horizontal, 16)
-//            .shadow(color: Color(red: 0, green: 0, blue: 0, opacity: 0.25), radius: 3, x: 0, y: 2)
             .environment(\.layoutDirection, isRTL ? .rightToLeft : .leftToRight)
         }
+    }
+}
+
+@available(iOS 13.0, macOS 11, *)
+struct DividerLine: View {
+    var visible: Bool
+    
+    var body: some View {
+        Color(red: 172/255, green: 172/255, blue: 182/255, opacity: 1)
+            .frame(width: .infinity, height: visible ? 1 : 0)
+            .padding(.top,  -1)
     }
 }
 
@@ -182,13 +152,12 @@ public struct TabbyCheckoutSnippet: View {
 struct InstallmentSnippetView_Preview: PreviewProvider {
     static var previews: some View {
         VStack{
-            TabbyCheckoutSnippet(amount: 5000, currency: .AED)
-                  TabbyCheckoutSnippet(amount: 350, currency: .AED)
-                    .environment(\.layoutDirection, .rightToLeft)
-                  TabbyCheckoutSnippet(amount: 350, currency: .AED, preferCurrencyInArabic: true)
-                    .environment(\.layoutDirection, .rightToLeft)
+            TabbyCheckoutSnippet(amount: 1000, currency: .AED)
+            TabbyCheckoutSnippet(amount: 350, currency: .AED)
+                .environment(\.layoutDirection, .rightToLeft)
+            TabbyCheckoutSnippet(amount: 350, currency: .AED, preferCurrencyInArabic: true)
+                .environment(\.layoutDirection, .rightToLeft)
         }
         .preferredColorScheme(.light)
-//        .previewLayout(.sizeThatFits)
     }
 }
