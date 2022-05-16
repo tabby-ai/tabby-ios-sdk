@@ -45,11 +45,9 @@ public struct TabbyProductPageSnippet: View {
                         + Text(textNode2)
                             .foregroundColor(textPrimaryColor)
                             .font(.system(size: 14, weight: .bold))
-                            
                         + Text(textNode3)
                             .foregroundColor(textPrimaryColor)
                             .font(.system(size: 14))
-                            
                         + Text(learnMoreText)
                             .foregroundColor(textPrimaryColor)
                             .font(.system(size: 14))
