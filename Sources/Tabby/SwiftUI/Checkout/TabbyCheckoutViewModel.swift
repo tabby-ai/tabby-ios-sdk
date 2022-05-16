@@ -18,24 +18,25 @@ final class TabbyCheckoutViewModel: UIViewController, WKScriptMessageHandlerWith
         DispatchQueue.main.async {
             let parsedMessage = msg.trimmingCharacters(in: CharacterSet(charactersIn: "\""))
             switch parsedMessage {
-                case "close":
-                    self.result = .close
-                    break
-                case "expired":
-                    self.result = .expired
-                    break
-                case "authorized":
-                    self.result = .authorized
-                    break
-                case "rejected":
-                    self.result = .rejected
-                    break
-                default:
-                    break
+            case "close":
+                self.result = .close
+                break
+            case "expired":
+                self.result = .expired
+                break
+            case "authorized":
+                self.result = .authorized
+                break
+            case "rejected":
+                self.result = .rejected
+                break
+            default:
+                self.result = .close
+                break
             }
         }
     }
-
+    
     func userContentController(_ userContentController: WKUserContentController, didReceive message: WKScriptMessage, replyHandler: @escaping (Any?, String?) -> Void) {
         // implementation is not required
     }
