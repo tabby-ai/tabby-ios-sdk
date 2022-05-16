@@ -32,7 +32,7 @@ public final class TabbySDK {
                             tabbyProductTypes.append(key)
                         }
                     }
-                    
+
                     let res: (sessionId: String, paymentId: String, tabbyProductTypes: [TabbyProductType]) = (
                         sessionId: s.id,
                         paymentId: s.payment.id,
