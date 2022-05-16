@@ -11,7 +11,7 @@ import UIKit
 
 @available(iOS 13.0, *)
 struct CheckoutWebView: UIViewRepresentable {
-  var productType: ProductType
+  var productType: TabbyProductType
   var url: String?
   var vc: TabbyCheckoutViewModel
   
