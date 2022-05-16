@@ -14,7 +14,7 @@ public enum Currency: String, Codable {
   case KWD = "KWD"
   
   public func localized(l: Lang?) -> String {
-    if( l == nil || l == .en) {
+    if (l == nil || l == .en) {
       return self.rawValue
     }
     switch self {
