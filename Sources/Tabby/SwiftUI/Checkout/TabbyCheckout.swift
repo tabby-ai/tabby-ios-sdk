@@ -7,22 +7,7 @@
 
 import SwiftUI
 
-@available(iOS 13.0, *)
-struct ActivityIndicator: UIViewRepresentable {
-    
-    @Binding var isAnimating: Bool
-    let style: UIActivityIndicatorView.Style
-    
-    func makeUIView(context: UIViewRepresentableContext<ActivityIndicator>) -> UIActivityIndicatorView {
-        return UIActivityIndicatorView(style: style)
-    }
-    
-    func updateUIView(_ uiView: UIActivityIndicatorView, context: UIViewRepresentableContext<ActivityIndicator>) {
-        isAnimating ? uiView.startAnimating() : uiView.stopAnimating()
-    }
-}
-
-public class TabbySDK {
+public final class TabbySDK {
     public typealias SessionCompletion = Result<(sessionId: String, paymentId: String, tabbyProductTypes: [TabbyProductType]), CheckoutError>
     
     public static var shared = TabbySDK()
@@ -47,19 +32,19 @@ public class TabbySDK {
                             tabbyProductTypes.append(key)
                         }
                     }
-
+                    
                     let res: (sessionId: String, paymentId: String, tabbyProductTypes: [TabbyProductType]) = (
                         sessionId: s.id,
                         paymentId: s.payment.id,
                         tabbyProductTypes: tabbyProductTypes
                     )
                     completion(.success(res))
+                    
                 case .failure(let error):
                     print(error.localizedDescription)
                     completion(.failure(error))
                 }
             }
-            
         })
     }
 }
@@ -99,7 +84,6 @@ public struct TabbyCheckout: View {
                     guard let products = s.configuration.availableProducts["pay_later"] else {
                         checkout.payLaterURL = ""
                         break
-                        
                     }
                     guard let product = products.first else {
                         checkout.payLaterURL = ""
@@ -152,7 +136,7 @@ public struct TabbyCheckout: View {
     
     public var body: some View {
         HStack {
-            if(productType == .installments) {
+            if (productType == .installments) {
                 CheckoutWebView(
                     productType: .installments,
                     url: self.checkout.installmentsURL,
@@ -160,12 +144,19 @@ public struct TabbyCheckout: View {
                 )
             } else if (productType == .pay_later) {
                 CheckoutWebView(
-                    productType: .payLater,
+                    productType: .pay_later,
                     url: self.checkout.payLaterURL,
                     vc: self.checkout
                 )
-            } else {
-                ActivityIndicator(isAnimating: .constant(true), style: .medium)
+            }  else if (productType == .credit_card_installments) {
+                CheckoutWebView(
+                    productType: .credit_card_installments,
+                    url: self.checkout.creditCardInstallmentsURL,
+                    vc: self.checkout
+                )
+            }
+            else {
+                ActivityIndicator(style: .medium)
             }
         }
         .valueChanged(value: checkout.result, onChange: { val in
