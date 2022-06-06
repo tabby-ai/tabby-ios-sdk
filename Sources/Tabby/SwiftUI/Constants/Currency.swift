@@ -8,24 +8,26 @@
 import Foundation
 
 public enum Currency: String, Codable {
-  case AED = "AED"
-  case SAR = "SAR"
-  case BHD = "BHD"
-  case KWD = "KWD"
-  
-  public func localized(l: Lang?) -> String {
-    if (l == nil || l == .en) {
-      return self.rawValue
+    case aed = "AED"
+    case sar = "SAR"
+    case bhd = "BHD"
+    case kwd = "KWD"
+    case egp = "EGP"
+    
+    public func localized(l: Lang?) -> String {
+        if l == nil || l == .en { return rawValue }
+        
+        switch self {
+        case .aed:
+            return "د.إ"
+        case .sar:
+            return "ر.س"
+        case .bhd:
+            return "د.ب"
+        case .kwd:
+            return "د.ك"
+        case .egp:
+            return "جنيه"
+        }
     }
-    switch self {
-      case .AED:
-        return "د.إ"
-      case .SAR:
-        return "ر.س"
-      case .BHD:
-        return "د.ب"
-      case .KWD:
-        return "د.ك"
-    }
-  }
 }

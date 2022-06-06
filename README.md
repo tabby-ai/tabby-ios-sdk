@@ -57,7 +57,7 @@ let customerPayment = Payment(
     )
 )
 
-let myTestPayment = TabbyCheckoutPayload(merchant_code: "ae", lang: .en, payment: customerPayment)
+let myTestPayment = TabbyCheckoutPayload(merchantCode: "ae", lang: .en, payment: customerPayment)
 
 ...
 in your CartScreenView etc in .onAppear or viewDidLoad
@@ -70,17 +70,17 @@ in your CartScreenView etc in .onAppear or viewDidLoad
             print("sessionId: \(s.sessionId)")
             // 2. Do something with paymentId (this step is optional)
             print("paymentId: \(s.paymentId)")
-            // 2. Grab avaibable products from session and enable proper
+            // 2. Grab available products from session and enable proper
             // payment method buttons in your UI (this step is required)
             print("tabby available products: \(s.tabbyProductTypes)")
-            if (s.tabbyProductTypes.contains(.installments)) {
+            if s.tabbyProductTypes.contains(.installments) {
                 self.isTabbyInstallmentsAvailable = true
             }
-            if (s.tabbyProductTypes.contains(.pay_later)) {
-                self.isTabbyPaylatersAvailable = true
+            if s.tabbyProductTypes.contains(.payLater) {
+                self.isTabbyPayLatersAvailable = true
             }
         case .failure(let error):
-            // Do something when Tabby checkout session POST requiest failed
+            // Do something when Tabby checkout session POST request failed
             print(error)
         }
     }
@@ -90,11 +90,11 @@ in your CartScreenView etc in .onAppear or viewDidLoad
 ### 3. Launch Tabby checkout
 
 SDK is built for your convenience - once `TabbySDK.shared.configure(forPayment: myTestPayment) { result in ... }` is called - you can render something like this
-if modal / sheet / seguway / NavigationLink / ViewController etc - whatever fits your UI and app structure. With both SwiftUI and UIKit
+if modal / sheet / segue / NavigationLink / ViewController etc - whatever fits your UI and app structure. With both SwiftUI and UIKit
 
 ```swift
-.sheet(isPresented: $isTabbyOpened, content: {
-    TabbyCheckout(productType: openedProduct, onResult: { result in
+.sheet(isPresented: $isTabbyOpened) {
+    TabbyCheckoutView(productType: openedProduct, onResult: { result in
         print("TABBY RESULT: \(result) !")
         switch result {
         case .authorized:
@@ -118,7 +118,7 @@ if modal / sheet / seguway / NavigationLink / ViewController etc - whatever fits
             break
         }
     })
-})
+}
 ```
 
 ![Checkout](./docs/Checkout.gif)
@@ -129,7 +129,7 @@ if modal / sheet / seguway / NavigationLink / ViewController etc - whatever fits
 
 struct CheckoutExampleWithTabby: View {
     @State var isTabbyInstallmentsAvailable = false
-    @State var isTabbyPaylatersAvailable = false
+    @State var isTabbyPayLatersAvailable = false
 
     @State var openedProduct: TabbyProductType = .installments
     @State var isTabbyOpened: Bool = false
@@ -149,20 +149,20 @@ struct CheckoutExampleWithTabby: View {
             .disabled(!isTabbyInstallmentsAvailable)
 
             Button(action: {
-                openedProduct = .pay_later
+                openedProduct = .payLater
                 isTabbyOpened = true
             }, label: {
                 HStack {
                     Text("My Tabby 'PayLater' fancy Button")
                         .font(.headline)
-                        .foregroundColor(isTabbyPaylatersAvailable ? .black : .white)
+                        .foregroundColor(isTabbyPayLatersAvailable ? .black : .white)
                 }
             })
-            .disabled(!isTabbyPaylatersAvailable)
+            .disabled(!isTabbyPayLatersAvailable)
 
         }
-        .sheet(isPresented: $isTabbyOpened, content: {
-            TabbyCheckout(productType: openedProduct, onResult: { result in
+        .sheet(isPresented: $isTabbyOpened) {
+            TabbyCheckoutView(productType: openedProduct, onResult: { result in
                 print("TABBY RESULT: \(result)!!!")
                 switch result {
                 case .authorized:
@@ -186,8 +186,8 @@ struct CheckoutExampleWithTabby: View {
                     break
                 }
             })
-        })
-        .onAppear() {
+        }
+        .onAppear {
             TabbySDK.shared.configure(forPayment: myTestPayment) { result in
                 switch result {
                 case .success(let s):
@@ -195,7 +195,7 @@ struct CheckoutExampleWithTabby: View {
                     print("sessionId: \(s.sessionId)")
                     // 2. Do something with paymentId (this step is optional)
                     print("paymentId: \(s.paymentId)")
-                    // 3. Grab avaibable products from session and enable proper
+                    // 3. Grab available products from session and enable proper
                     // payment method buttons in your UI (this step is required)
                     // Feel free to ignore products you don't need or don't want to handle in your App
                     print("tabby available products: \(s.tabbyProductTypes)")
@@ -203,12 +203,12 @@ struct CheckoutExampleWithTabby: View {
                     if (s.tabbyProductTypes.contains(.installments)) {
                         self.isTabbyInstallmentsAvailable = true
                     }
-                    // If you want to handle pay_later product - check for .pay_later in response
-                    if (s.tabbyProductTypes.contains(.pay_later)) {
-                        self.isTabbyPaylatersAvailable = true
+                    // If you want to handle pay_later product - check for .payLater in response
+                    if (s.tabbyProductTypes.contains(.payLater)) {
+                        self.isTabbyPayLatersAvailable = true
                     }
                 case .failure(let error):
-                    // Do something when Tabby checkout session POST requiest failed
+                    // Do something when Tabby checkout session POST request failed
                     print(error)
                 }
             }
@@ -241,7 +241,7 @@ class ViewController: UIViewController {
         super.viewDidLoad()
         if #available(iOS 13.0, *) {
             let vc = UIHostingController(
-                rootView: Tabby.TabbyProductPageSnippet(amount: 1990, currency: .SAR)
+                rootView: Tabby.TabbyProductPageSnippet(amount: 1990, currency: .sar)
             )
             addChild(vc)
             vc.view.frame = view.frame

@@ -7,60 +7,71 @@
 
 import Foundation
 
-struct CheckoutSession: Codable {
-    var id: String
-    var configuration: Configuration
-    var payment: CheckoutPayment
+public struct CheckoutSession: Codable {
+    let id: String
+    let configuration: Configuration
+    let payment: CheckoutPayment
 }
 
 struct CheckoutPayment: Codable {
-    var id: String
+    let id: String
 }
 
 struct Configuration: Codable {
-    var availableProducts: [String: [Product]]
+    let availableProducts: [String: [Product]]
     
     enum CodingKeys: String, CodingKey {
         case availableProducts = "available_products"
     }
 }
 
-
 struct Product: Codable {
-    var webUrl: String
+    let webUrl: String
     
     enum CodingKeys: String, CodingKey {
         case webUrl = "web_url"
     }
 }
 
-public enum TabbyResult: String {
-    case close = "close"
-    case authorized = "authorized"
-    case rejected = "rejected"
-    case expired = "expired"
+public enum TabbyState: String {
+    case close
+    case authorized
+    case rejected
+    case expired
 }
 
 public enum TabbyProductType: String, Codable, CaseIterable {
     case installments = "installments"
-    case pay_later = "pay_later"
-    case credit_card_installments = "credit_card_installments"
+    case payLater = "pay_later"
+    case creditCardInstallments = "credit_card_installments"
+    
+    enum CodingKeys: String, CodingKey {
+        case installments = "installments"
+        case payLater = "pay_later"
+        case creditCardInstallments = "credit_card_installments"
+    }
 }
 
 public struct TabbyCheckoutPayload: Codable {
-    public let merchant_code: String
+    public let merchantCode: String
     public let lang: Lang
     public let payment: Payment
     
-    public init(merchant_code: String, lang: Lang, payment: Payment) {
-        self.merchant_code = merchant_code
+    public init(merchantCode: String, lang: Lang, payment: Payment) {
+        self.merchantCode = merchantCode
         self.lang = lang
         self.payment = payment
+    }
+    
+    enum CodingKeys: String, CodingKey {
+        case merchantCode = "merchant_code"
+        case lang = "lang"
+        case payment = "payment"
     }
 }
 
 struct PaymentResult: Decodable {
-    var status: PaymentStatus
+    let status: PaymentStatus
     
     enum CodingKeys: String, CodingKey {
         case status = "status"
@@ -75,11 +86,6 @@ enum PaymentStatus: String, Decodable {
 }
 
 struct CreatedCheckoutSession: Decodable {
-    var status: String
-    var payment: PaymentResult
-    
-    enum CodingKeys: String, CodingKey {
-        case status = "status"
-        case payment = "payment"
-    }
+    let status: String
+    let payment: PaymentResult
 }

@@ -7,23 +7,24 @@
 
 import SwiftUI
 
-@available(iOS 13.0, *)
+// MARK: - ActivityIndicator
+
 struct ActivityIndicator: UIViewRepresentable {
+    
+    // MARK: - Internal Properties
+
     let style: UIActivityIndicatorView.Style
     
-    func makeUIView(context: UIViewRepresentableContext<ActivityIndicator>) -> UIActivityIndicatorView {
-        return UIActivityIndicatorView(style: style)
-    }
+    // MARK: - Internal Methods
+
+    func makeUIView(context: UIViewRepresentableContext<ActivityIndicator>) -> UIActivityIndicatorView { .init(style: style) }
     
-    func updateUIView(_ uiView: UIActivityIndicatorView, context: UIViewRepresentableContext<ActivityIndicator>) {
-        uiView.startAnimating()
-    }
+    func updateUIView(_ uiView: UIActivityIndicatorView, context: UIViewRepresentableContext<ActivityIndicator>) { uiView.startAnimating() }
 }
 
-@available(iOS 13.0, *)
 struct ActivityIndicator_Preview: PreviewProvider {
-  static var previews: some View {
-    ActivityIndicator(style: .large)
-        .previewLayout(.sizeThatFits)
-  }
+    static var previews: some View {
+        ActivityIndicator(style: .large)
+            .previewLayout(.sizeThatFits)
+    }
 }
