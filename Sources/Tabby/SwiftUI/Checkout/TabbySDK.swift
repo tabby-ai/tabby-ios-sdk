@@ -27,7 +27,7 @@ public final class TabbySDK {
     public func getApiKey() -> String { apiKey }
     
     public func configure(forPayment payload: TabbyCheckoutPayload, completion: @escaping (SessionCompletion) -> ()) {
-        apiClient.checkout(payload: payload) { [weak self] res in
+        apiClient.checkout(payload: payload, apiKey: apiKey) { [weak self] res in
             DispatchQueue.main.async {
                 switch res {
                 case let .success(session):
@@ -44,7 +44,7 @@ public final class TabbySDK {
     }
     
     public func configure(forPayment payload: TabbyCheckoutPayload) async throws -> (SessionCompletion) {
-        let res = try await apiClient.checkoutAsync(payload: payload)
+        let res = try await apiClient.checkoutAsync(payload: payload, apiKey: apiKey)
         switch res {
         case let .success(session):
             self.session = session

@@ -11,9 +11,9 @@ import Foundation
 // MARK: - CheckoutProvider
 
 protocol CheckoutProvider {
-    func checkout(payload: TabbyCheckoutPayload, completion: @escaping((Result<CheckoutSession, APIError>) -> Void))
-    func checkoutPublisher(payload: TabbyCheckoutPayload) -> AnyPublisher<CheckoutSession, APIError>
-    func checkoutAsync(payload: TabbyCheckoutPayload) async throws -> (Result<CheckoutSession, APIError>)
+    func checkout(payload: TabbyCheckoutPayload, apiKey: String, completion: @escaping((Result<CheckoutSession, APIError>) -> Void))
+    func checkoutPublisher(payload: TabbyCheckoutPayload, apiKey: String) -> AnyPublisher<CheckoutSession, APIError>
+    func checkoutAsync(payload: TabbyCheckoutPayload, apiKey: String) async throws -> (Result<CheckoutSession, APIError>)
 }
 
 // MARK: - APIClient
@@ -24,26 +24,24 @@ final class APIClient {
 
     private let baseURL = "https://api.tabby.ai"
     private let version = "/api/v2"
-    private let apiKey: String
     
+    // MARK: - Endpoint
+
     private enum Endpoint: String {
         case checkout = "/checkout"
     }
     
+    // MARK: - Method
+
     private enum Method: String {
         case get
         case post
     }
     
-    init(apiKey: String = TabbySDK.shared.getApiKey()) {
-        self.apiKey = apiKey
-    }
-    
-    
     // MARK: - Private Methods
 
-    private func request(for endpoint: Endpoint, method: Method) -> URLRequest {
-        let path = "\(baseURL)\(endpoint.rawValue)"
+    private func request(for endpoint: Endpoint, method: Method, apiKey: String) -> URLRequest {
+        let path = "\(baseURL)\(version)\(endpoint.rawValue)"
         guard let url = URL(string: path) else { preconditionFailure("Bad URL") }
         
         var request = URLRequest(url: url)
@@ -56,9 +54,8 @@ final class APIClient {
     }
     
     /// Callback Request
-    @available(*, renamed: "fetchImages()")
-    private func send<T: Codable>(with endPoint: Endpoint, method: Method, completion: @escaping((Result<T, APIError>) -> Void)) {
-        let urlRequest = request(for: endPoint, method: method)
+    private func send<T: Codable>(with endPoint: Endpoint, method: Method, apiKey: String, completion: @escaping((Result<T, APIError>) -> Void)) {
+        let urlRequest = request(for: endPoint, method: method, apiKey: apiKey)
         
         let dataTask = URLSession.shared.dataTask(with: urlRequest) { data, _, error in
             guard error == nil else { completion(.failure(.serverError)); return }
@@ -75,8 +72,8 @@ final class APIClient {
     }
     
     /// Combine Request
-    private func send<T: Codable>(with endPoint: Endpoint, method: Method) -> AnyPublisher<T, APIError> {
-        let urlRequest = request(for: endPoint, method: method)
+    private func send<T: Codable>(with endPoint: Endpoint, method: Method, apiKey: String) -> AnyPublisher<T, APIError> {
+        let urlRequest = request(for: endPoint, method: method, apiKey: apiKey)
         
         return URLSession.shared.dataTaskPublisher(for: urlRequest)
             .mapError { _ in APIError.serverError }
@@ -87,8 +84,8 @@ final class APIClient {
     }
     
     /// Async/await Request
-    private func send(with endPoint: Endpoint, method: Method) async throws -> (Data, URLResponse) {
-        let urlRequest = request(for: endPoint, method: method)
+    private func send(with endPoint: Endpoint, method: Method, apiKey: String) async throws -> (Data, URLResponse) {
+        let urlRequest = request(for: endPoint, method: method, apiKey: apiKey)
         
         if #available(iOS 15.0, *) {
             return try await URLSession.shared.data(for: urlRequest)
@@ -110,17 +107,17 @@ final class APIClient {
 // MARK: - APIClient (CheckoutProvider)
 
 extension APIClient: CheckoutProvider {
-    func checkout(payload: TabbyCheckoutPayload, completion: @escaping((Result<CheckoutSession, APIError>) -> Void)) {
-        send(with: .checkout, method: .post, completion: completion)
+    func checkout(payload: TabbyCheckoutPayload, apiKey: String, completion: @escaping((Result<CheckoutSession, APIError>) -> Void)) {
+        send(with: .checkout, method: .post, apiKey: apiKey, completion: completion)
     }
     
-    func checkoutPublisher(payload: TabbyCheckoutPayload) -> AnyPublisher<CheckoutSession, APIError> {
-        send(with: .checkout, method: .post)
+    func checkoutPublisher(payload: TabbyCheckoutPayload, apiKey: String) -> AnyPublisher<CheckoutSession, APIError> {
+        send(with: .checkout, method: .post, apiKey: apiKey)
     }
     
-    func checkoutAsync(payload: TabbyCheckoutPayload) async throws -> (Result<CheckoutSession, APIError>) {
+    func checkoutAsync(payload: TabbyCheckoutPayload, apiKey: String) async throws -> (Result<CheckoutSession, APIError>) {
         do {
-            let (data, _) = try await send(with: .checkout, method: .post)
+            let (data, _) = try await send(with: .checkout, method: .post, apiKey: apiKey)
             let object = try JSONDecoder().decode(CheckoutSession.self, from: data)
             return .success(object)
         } catch {
