@@ -36,6 +36,7 @@ struct Product: Codable {
 public enum TabbyState: String {
     case close
     case authorized
+    case created
     case rejected
     case expired
 }

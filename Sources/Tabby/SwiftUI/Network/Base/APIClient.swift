@@ -39,27 +39,11 @@ final class APIClient {
     }
     
     // MARK: - Private Methods
-
-    private func request(for endpoint: Endpoint, method: Method, apiKey: String) -> URLRequest {
-        let path = "\(baseURL)\(version)\(endpoint.rawValue)"
-        guard let url = URL(string: path) else { preconditionFailure("Bad URL") }
-        
-        var request = URLRequest(url: url)
-        request.httpMethod = "\(method)".uppercased()
-        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
-        request.setValue("application/json", forHTTPHeaderField: "Accept")
-        request.setValue("Bearer \(apiKey)", forHTTPHeaderField: "Authorization")
-        
-        return request
-    }
     
     /// Callback Request
-    private func send<T: Codable>(with endPoint: Endpoint, method: Method, apiKey: String, completion: @escaping((Result<T, APIError>) -> Void)) {
-        let urlRequest = request(for: endPoint, method: method, apiKey: apiKey)
-        
-        let dataTask = URLSession.shared.dataTask(with: urlRequest) { data, _, error in
+    private func send<T: Codable>(with request: URLRequest, apiKey: String, completion: @escaping((Result<T, APIError>) -> Void)) {
+        let dataTask = URLSession.shared.dataTask(with: request) { data, _, error in
             guard error == nil else { completion(.failure(.serverError)); return }
-            
             do {
                 guard let data = data else { completion(.failure(.invalidData)); return }
                 let object = try JSONDecoder().decode(T.self, from: data)
@@ -72,10 +56,8 @@ final class APIClient {
     }
     
     /// Combine Request
-    private func send<T: Codable>(with endPoint: Endpoint, method: Method, apiKey: String) -> AnyPublisher<T, APIError> {
-        let urlRequest = request(for: endPoint, method: method, apiKey: apiKey)
-        
-        return URLSession.shared.dataTaskPublisher(for: urlRequest)
+    private func send<T: Codable>(with request: URLRequest, apiKey: String) -> AnyPublisher<T, APIError> {
+        return URLSession.shared.dataTaskPublisher(for: request)
             .mapError { _ in APIError.serverError }
             .map { $0.data }
             .decode(type: T.self, decoder: JSONDecoder())
@@ -84,14 +66,12 @@ final class APIClient {
     }
     
     /// Async/await Request
-    private func send(with endPoint: Endpoint, method: Method, apiKey: String) async throws -> (Data, URLResponse) {
-        let urlRequest = request(for: endPoint, method: method, apiKey: apiKey)
-        
+    private func send(with request: URLRequest, apiKey: String) async throws -> (Data, URLResponse) {
         if #available(iOS 15.0, *) {
-            return try await URLSession.shared.data(for: urlRequest)
+            return try await URLSession.shared.data(for: request)
         } else {
             return try await withCheckedThrowingContinuation { continuation in
-                let task = URLSession.shared.dataTask(with: urlRequest) { data, response, error in
+                let task = URLSession.shared.dataTask(with: request) { data, response, error in
                     guard let data = data, let response = response else {
                         let error = error ?? URLError(.badServerResponse)
                         return continuation.resume(throwing: error)
@@ -102,26 +82,50 @@ final class APIClient {
             }
         }
     }
+    
+    private func request(for endpoint: Endpoint, method: Method, apiKey: String) -> URLRequest {
+        let path = "\(baseURL)\(version)\(endpoint.rawValue)"
+        guard let url = URL(string: path) else { preconditionFailure("Bad URL") }
+        
+        var request = URLRequest(url: url)
+        request.httpMethod = "\(method)".uppercased()
+        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        request.setValue("application/json", forHTTPHeaderField: "Accept")
+        request.setValue("Bearer \(apiKey)", forHTTPHeaderField: "Authorization")
+                        
+        return request
+    }
 }
 
 // MARK: - APIClient (CheckoutProvider)
 
 extension APIClient: CheckoutProvider {
     func checkout(payload: TabbyCheckoutPayload, apiKey: String, completion: @escaping((Result<CheckoutSession, APIError>) -> Void)) {
-        send(with: .checkout, method: .post, apiKey: apiKey, completion: completion)
+        var urlRequest = request(for: .checkout, method: .post, apiKey: apiKey)
+        urlRequest.jsonBody(payload)
+        send(with: urlRequest, apiKey: apiKey, completion: completion)
     }
     
     func checkoutPublisher(payload: TabbyCheckoutPayload, apiKey: String) -> AnyPublisher<CheckoutSession, APIError> {
-        send(with: .checkout, method: .post, apiKey: apiKey)
+        var urlRequest = request(for: .checkout, method: .post, apiKey: apiKey)
+        urlRequest.jsonBody(payload)
+        return send(with: urlRequest, apiKey: apiKey)
     }
     
     func checkoutAsync(payload: TabbyCheckoutPayload, apiKey: String) async throws -> (Result<CheckoutSession, APIError>) {
-        do {
-            let (data, _) = try await send(with: .checkout, method: .post, apiKey: apiKey)
-            let object = try JSONDecoder().decode(CheckoutSession.self, from: data)
-            return .success(object)
-        } catch {
-            return .failure(.parsingError)
-        }
+        var urlRequest = request(for: .checkout, method: .post, apiKey: apiKey)
+        urlRequest.jsonBody(payload)
+        
+        guard let (data, _) = try? await send(with: urlRequest, apiKey: apiKey) else { return .failure(.parsingError) }
+        let object = try JSONDecoder().decode(CheckoutSession.self, from: data)
+        return .success(object)
+    }
+}
+
+// MARK: - URLRequest ()
+
+private extension URLRequest {
+    mutating func jsonBody<T: Encodable>(_ payload: T) {
+        httpBody = try? JSONEncoder().encode(payload)
     }
 }

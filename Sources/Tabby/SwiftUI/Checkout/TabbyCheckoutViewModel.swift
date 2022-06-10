@@ -96,11 +96,11 @@ extension TabbyCheckoutViewModel: WKScriptMessageHandler {
             self.result = .close
             return
         }
-        
-        let parsedMessage = message.trimmingCharacters(in: CharacterSet(charactersIn: "\""))
+        let stateValue = message.trimmingCharacters(in: CharacterSet(charactersIn: "\""))
+        guard let state = TabbyState(rawValue: stateValue) else { return }
 
         DispatchQueue.main.async {
-            self.result = TabbyState(rawValue: parsedMessage) ?? .close
+            self.result = state
         }
     }
 }
