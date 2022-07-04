@@ -12,20 +12,25 @@ public enum Currency: String, Codable {
   case SAR = "SAR"
   case BHD = "BHD"
   case KWD = "KWD"
+  case EGP = "EGP"
+  
   
   public func localized(l: Lang?) -> String {
     if (l == nil || l == .en) {
       return self.rawValue
     }
     switch self {
-      case .AED:
-        return "د.إ"
-      case .SAR:
-        return "ر.س"
-      case .BHD:
-        return "د.ب"
-      case .KWD:
-        return "د.ك"
+    case .AED:
+      return "د.إ"
+    case .SAR:
+      return "ر.س"
+    case .BHD:
+      return "د.ب"
+    case .KWD:
+      return "د.ك"
+    case .EGP:
+      return "ج.م"
     }
   }
 }
+
