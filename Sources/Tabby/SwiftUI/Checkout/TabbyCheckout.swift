@@ -80,21 +80,6 @@ public struct TabbyCheckout: View {
                     }
                     checkout.installmentsURL = webUrl
                     
-                case "pay_later":
-                    guard let products = s.configuration.availableProducts["pay_later"] else {
-                        checkout.payLaterURL = ""
-                        break
-                    }
-                    guard let product = products.first else {
-                        checkout.payLaterURL = ""
-                        break
-                    }
-                    guard let webUrl = product.webUrl as String? else {
-                        checkout.payLaterURL = ""
-                        break
-                    }
-                    checkout.payLaterURL = webUrl
-                    
                 case "credit_card_installments":
                     guard let products = s.configuration.availableProducts["credit_card_installments"] else {
                         checkout.creditCardInstallmentsURL = ""
@@ -124,12 +109,6 @@ public struct TabbyCheckout: View {
                 CheckoutWebView(
                     productType: .installments,
                     url: self.checkout.installmentsURL,
-                    vc: self.checkout
-                )
-            } else if (productType == .pay_later) {
-                CheckoutWebView(
-                    productType: .pay_later,
-                    url: self.checkout.payLaterURL,
                     vc: self.checkout
                 )
             }  else if (productType == .credit_card_installments) {

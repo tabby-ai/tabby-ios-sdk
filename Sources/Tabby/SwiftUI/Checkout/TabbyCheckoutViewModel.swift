@@ -44,7 +44,6 @@ final class TabbyCheckoutViewModel: UIViewController, WKScriptMessageHandlerWith
     @Published var session: CheckoutSession?
     @Published var pending: Bool = false
     @Published var installmentsURL: String?
-    @Published var payLaterURL: String?
     @Published var creditCardInstallmentsURL: String?
     
     @Published var result: TabbyResult?
