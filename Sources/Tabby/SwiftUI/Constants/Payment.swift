@@ -22,16 +22,16 @@ public struct Buyer: Codable {
 }
 
 public struct OrderItem: Codable {
-  public let description: String // 'To be displayed in tabby order information'
-  public let product_url: String // https://tabby.store/p/SKU123
+  public let description: String? // 'To be displayed in tabby order information'
+  public let product_url: String? // https://tabby.store/p/SKU123
   public let quantity: Int // 1
   public let reference_id: String // 'SKU123'
   public let title: String // 'Sample Item #1'
   public let unit_price: String // '300'
   public let category: String // jeans / dress / shorts
   
-  public init(description: String,
-              product_url: String,
+  public init(description: String? = nil,
+              product_url: String? = nil,
               quantity: Int,
               reference_id: String,
               title: String,
@@ -50,13 +50,13 @@ public struct OrderItem: Codable {
 
 public struct Order: Codable {
   public let reference_id: String // #xxxx-xxxxxx-xxxx
-  public let items: [OrderItem]?
+  public let items: [OrderItem]
   public let shipping_amount: String? // '50'
   public let tax_amount: String? // '500'
   public let discount_amount: String? // '500'
   
   public init(reference_id: String,
-              items: [OrderItem]? = nil,
+              items: [OrderItem],
               shipping_amount: String? = nil,
               tax_amount: String? = nil,
               discount_amount: String? = nil
@@ -87,19 +87,19 @@ public enum OrderItemStatus: String, Codable {
 public struct OrderHistory: Codable {
   public let purchased_at: String // "2019-08-24T14:15:22Z"
   public let amount: String // "10.00"
-  public let payment_method: OrderItemPaymentMethod
+  public let payment_method: OrderItemPaymentMethod?
   public let status: OrderItemStatus
-  public let buyer: Buyer
-  public let items: [OrderItem]
-  public let shipping_address: ShippingAddress
+  public let buyer: Buyer?
+  public let items: [OrderItem]?
+  public let shipping_address: ShippingAddress?
   
   public init(purchased_at: String,
               amount: String,
-              payment_method: OrderItemPaymentMethod,
+              payment_method: OrderItemPaymentMethod? = nil,
               status: OrderItemStatus,
-              buyer: Buyer,
-              items: [OrderItem],
-              shipping_address: ShippingAddress
+              buyer: Buyer? = nil,
+              items: [OrderItem]? = nil,
+              shipping_address: ShippingAddress?
   ) {
     self.purchased_at = purchased_at
     self.amount = amount
@@ -114,27 +114,29 @@ public struct OrderHistory: Codable {
 public struct ShippingAddress: Codable {
   public let address: String
   public let city: String
+  public let zip: String
   
-  public init(address: String, city: String) {
+  public init(address: String, city: String, zip: String) {
     self.address = address
     self.city = city
+    self.zip = zip
   }
 }
 
 public struct BuyerHistory: Codable {
   public let registered_since: String // "2019-08-24T14:15:22Z"
   public let loyalty_level: Int // 0
-  public let wishlist_count: Int // 0
-  public let is_social_networks_connected: Bool // true
-  public let is_phone_number_verified: Bool // true
-  public let is_email_verified: Bool // true
+  public let wishlist_count: Int? // 0
+  public let is_social_networks_connected: Bool? // true
+  public let is_phone_number_verified: Bool? // true
+  public let is_email_verified: Bool? // true
   
   public init(registered_since: String,
               loyalty_level: Int,
-              wishlist_count: Int,
-              is_social_networks_connected: Bool,
-              is_phone_number_verified: Bool,
-              is_email_verified: Bool) {
+              wishlist_count: Int? = nil,
+              is_social_networks_connected: Bool? = nil,
+              is_phone_number_verified: Bool? = nil,
+              is_email_verified: Bool? = nil) {
     self.registered_since = registered_since
     self.loyalty_level = loyalty_level
     self.wishlist_count = wishlist_count
@@ -147,21 +149,21 @@ public struct BuyerHistory: Codable {
 public struct Payment: Codable {
   public let amount: String
   public let currency: Currency
-  public let description: String
+  public let description: String?
   public let buyer: Buyer
-  public let buyer_history: BuyerHistory?
-  public let order: Order?
-  public let order_history: [OrderHistory]?
-  public let shipping_address: ShippingAddress?
+  public let buyer_history: BuyerHistory
+  public let order: Order
+  public let order_history: [OrderHistory]
+  public let shipping_address: ShippingAddress
   
   public init(amount: String,
               currency: Currency,
-              description: String,
+              description: String? = nil,
               buyer: Buyer,
-              buyer_history: BuyerHistory? = nil,
-              order: Order? = nil,
-              order_history: [OrderHistory]? = nil,
-              shipping_address: ShippingAddress? = nil
+              buyer_history: BuyerHistory,
+              order: Order,
+              order_history: [OrderHistory],
+              shipping_address: ShippingAddress
   ) {
     self.amount = amount
     self.currency = currency
