@@ -43,7 +43,6 @@ public enum TabbyResult: String {
 
 public enum TabbyProductType: String, Codable, CaseIterable {
     case installments = "installments"
-    case pay_later = "pay_later"
     case credit_card_installments = "credit_card_installments"
 }
 
@@ -71,7 +70,7 @@ enum PaymentStatus: String, Decodable {
     case authorized = "authorized"
     case rejected = "rejected"
     case closed = "closed"
-    case created = "CREATED"
+    case created = "created"
 }
 
 struct CreatedCheckoutSession: Decodable {
