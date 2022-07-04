@@ -18,20 +18,21 @@ final class TabbyCheckoutViewModel: UIViewController, WKScriptMessageHandlerWith
         DispatchQueue.main.async {
             let parsedMessage = msg.trimmingCharacters(in: CharacterSet(charactersIn: "\""))
             switch parsedMessage {
-                case "close":
-                    self.result = .close
-                    break
-                case "expired":
-                    self.result = .expired
-                    break
-                case "authorized":
-                    self.result = .authorized
-                    break
-                case "rejected":
-                    self.result = .rejected
-                    break
-                default:
-                    break
+            case "close":
+                self.result = .close
+                break
+            case "expired":
+                self.result = .expired
+                break
+            case "authorized":
+                self.result = .authorized
+                break
+            case "rejected":
+                self.result = .rejected
+                break
+            default:
+                self.result = .close
+                break
             }
         }
     }
@@ -43,8 +44,6 @@ final class TabbyCheckoutViewModel: UIViewController, WKScriptMessageHandlerWith
     @Published var session: CheckoutSession?
     @Published var pending: Bool = false
     @Published var installmentsURL: String?
-    @Published var payLaterURL: String?
-    @Published var monthlyBillingURL: String?
     @Published var creditCardInstallmentsURL: String?
     
     @Published var result: TabbyResult?
