@@ -31,7 +31,6 @@ final class TabbyCheckoutViewModel: UIViewController, WKScriptMessageHandlerWith
                 self.result = .rejected
                 break
             default:
-                self.result = .close
                 break
             }
         }
