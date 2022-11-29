@@ -12,7 +12,7 @@ Xcode 12.0+
 
 ```
 dependencies: [
-    .package(url: "https://github.com/tabby-ai/tabby-ios-sdk.git", .upToNextMajor(from: "1.3.0"))
+    .package(url: "https://github.com/tabby-ai/tabby-ios-sdk.git", .upToNextMajor(from: "1.5.0"))
 ]
 
 ```
@@ -199,7 +199,7 @@ struct CheckoutExampleWithTabby: View {
                     // payment method buttons in your UI (this step is required)
                     // Feel free to ignore products you don't need or don't want to handle in your App
                     print("tabby available products: \(s.tabbyProductTypes)")
-                    // If you want to handle installments product - check for .installments in response 
+                    // If you want to handle installments product - check for .installments in response
                     if (s.tabbyProductTypes.contains(.installments)) {
                         self.isTabbyInstallmentsAvailable = true
                     }
@@ -221,12 +221,13 @@ struct CheckoutExampleWithTabby: View {
 
 ## Snippets usage
 
-### Before you go add to your `Info.plist`. 
+### Before you go add to your `Info.plist`.
 
 ```
 <key>CFBundleAllowMixedLocalizations</key>
 <true/>
 ```
+
 This is required to enable Arabic locale in your snippets.
 
 ### TabbyPresentationSnippet
