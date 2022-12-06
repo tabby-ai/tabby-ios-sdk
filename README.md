@@ -33,11 +33,13 @@ let customerPayment = Payment(
     currency: .AED,
     description: "tabby Store Order #3",
     buyer: Buyer(
-    email: "successful.payment@tabby.ai",
-    phone: "500000001",
-    name: "Yazan Khalid"
+        email: "successful.payment@tabby.ai",
+        phone: "500000001",
+        name: "Yazan Khalid",
         dob: nil
-    ), order: Order(
+    ),
+    buyer_history: BuyerHistory(registered_since: "2019-08-24T14:15:22Z", loyalty_level: 0),
+    order: Order(
         reference_id: "#xxxx-xxxxxx-xxxx",
         items: [
             OrderItem(
@@ -46,14 +48,17 @@ let customerPayment = Payment(
                 quantity: 1,
                 reference_id: "SKU123",
                 title: "Pink jersey",
-                unit_price: "300"
+                unit_price: "300",
+                category: "Clothes"
             )],
         shipping_amount: "50",
         tax_amount: "100"
     ),
+    order_history: [],
     shipping_address: ShippingAddress(
         address: "Sample Address #2",
-        city: "Dubai"
+        city: "Dubai",
+        zip: "01234"
     )
 )
 
