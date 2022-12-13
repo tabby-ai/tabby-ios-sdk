@@ -13,14 +13,16 @@ public final class TabbySDK {
     public static var shared = TabbySDK()
     
     fileprivate var apiKey: String = ""
+    fileprivate var env: Env = .prod
     fileprivate var session: CheckoutSession?
     
-    public func setup(withApiKey apiKey: String) {
+    public func setup(withApiKey apiKey: String, forEnv env: Env = .prod) {
         self.apiKey = apiKey
+        self.env = env
     }
     
     public func configure(forPayment payload: TabbyCheckoutPayload, completion: @escaping (SessionCompletion) -> ()) {
-        Api.shared.createSession(payload: payload, apiKey: TabbySDK.shared.apiKey, completed: { result in
+        Api.shared.createSession(payload: payload, apiKey: TabbySDK.shared.apiKey, env: self.env, completed: { result in
             DispatchQueue.main.async {
                 switch result {
                 case .success(let s):
