@@ -17,13 +17,24 @@ dependencies: [
 
 ```
 
-## SDK usage
+# SDK usage
 
-### 1. Init Tabby when your app starts (AppDelegete or @main)
+## 0. Please make sure you've added in your `Info.plist`
+
+Feel free to edit descriptions according to your App
+
+```xml
+<key>NSCameraUsageDescription</key>
+<string>This allows Tabby to take a photo</string>
+<key>NSPhotoLibraryUsageDescription</key>
+<string>This allows Tabby to select a photo</string>
+```
+
+## 1. Init Tabby when your app starts (AppDelegete or @main)
 
 `TabbySDK.shared.setup(withApiKey: "__API_KEY_HERE__")`
 
-### 2. Prepare view
+## 2. Prepare view
 
 ```swift
 import Tabby
@@ -92,7 +103,7 @@ in your CartScreenView etc in .onAppear or viewDidLoad
 }
 ```
 
-### 3. Launch Tabby checkout
+## 3. Launch Tabby checkout
 
 SDK is built for your convenience - once `TabbySDK.shared.configure(forPayment: myTestPayment) { result in ... }` is called - you can render something like this
 if modal / sheet / seguway / NavigationLink / ViewController etc - whatever fits your UI and app structure. With both SwiftUI and UIKit
