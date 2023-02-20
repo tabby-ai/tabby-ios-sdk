@@ -1,9 +1,7 @@
 "snippetTitle1" = "or 4 interest-free payments of ";
-"snippetTitle1EG" = "4 payments of ";
 "snippetAmount" = "%@ %@ ";
 "snippetAmountEG" = "%@ %@. ";
 "snippetTitle2" = "";
-"snippetTitle2EG" = "No interest. No fees. ";
 "learnMore" = "Learn more";
 "noFees" = "No fees. Pay with any card.";
 "today" = "Today";
