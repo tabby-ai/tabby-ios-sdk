@@ -1,9 +1,7 @@
 "snippetTitle1" = "أو قسّمها على 4 دفعات شهرية بقيمة ";
-"snippetTitle1EG" = "4 دفعات بقيمة ";
 "snippetAmount" = "%@ %@ ";
 "snippetAmountEG" = "%@ %@ ";
 "snippetTitle2" = "بدون رسوم أو فوائد.";
-"snippetTitle2EG" = "بدون فوائد. بدون رسوم. ";
 "learnMore" = "لمعرفة المزيد";
 "noFees" = "ادفع باسخدام أي بطاقة. بدون رسوم.";
 "today" = "اليوم";
