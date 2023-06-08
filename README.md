@@ -92,9 +92,6 @@ in your CartScreenView etc in .onAppear or viewDidLoad
             if (s.tabbyProductTypes.contains(.installments)) {
                 self.isTabbyInstallmentsAvailable = true
             }
-            if (s.tabbyProductTypes.contains(.pay_later)) {
-                self.isTabbyPaylatersAvailable = true
-            }
         case .failure(let error):
             // Do something when Tabby checkout session POST requiest failed
             print(error)
@@ -145,7 +142,6 @@ if modal / sheet / seguway / NavigationLink / ViewController etc - whatever fits
 
 struct CheckoutExampleWithTabby: View {
     @State var isTabbyInstallmentsAvailable = false
-    @State var isTabbyPaylatersAvailable = false
 
     @State var openedProduct: TabbyProductType = .installments
     @State var isTabbyOpened: Bool = false
@@ -163,18 +159,6 @@ struct CheckoutExampleWithTabby: View {
                 }
             })
             .disabled(!isTabbyInstallmentsAvailable)
-
-            Button(action: {
-                openedProduct = .pay_later
-                isTabbyOpened = true
-            }, label: {
-                HStack {
-                    Text("My Tabby 'PayLater' fancy Button")
-                        .font(.headline)
-                        .foregroundColor(isTabbyPaylatersAvailable ? .black : .white)
-                }
-            })
-            .disabled(!isTabbyPaylatersAvailable)
 
         }
         .sheet(isPresented: $isTabbyOpened, content: {
@@ -218,10 +202,6 @@ struct CheckoutExampleWithTabby: View {
                     // If you want to handle installments product - check for .installments in response
                     if (s.tabbyProductTypes.contains(.installments)) {
                         self.isTabbyInstallmentsAvailable = true
-                    }
-                    // If you want to handle pay_later product - check for .pay_later in response
-                    if (s.tabbyProductTypes.contains(.pay_later)) {
-                        self.isTabbyPaylatersAvailable = true
                     }
                 case .failure(let error):
                     // Do something when Tabby checkout session POST requiest failed
