@@ -7,6 +7,7 @@
 
 import SwiftUI
 
+@available(iOS 14.0, macOS 11, *)
 struct AmountTextStyle: ViewModifier {
     func body(content: Content) -> some View {
         content
@@ -17,6 +18,7 @@ struct AmountTextStyle: ViewModifier {
     }
 }
 
+@available(iOS 14.0, macOS 11, *)
 struct WhenTextStyle: ViewModifier {
     func body(content: Content) -> some View {
         content

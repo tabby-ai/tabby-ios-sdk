@@ -28,6 +28,8 @@ Feel free to edit descriptions according to your App
 <string>This allows Tabby to take a photo</string>
 <key>NSPhotoLibraryUsageDescription</key>
 <string>This allows Tabby to select a photo</string>
+<key>NSMicrophoneUsageDescription</key>
+<string>For secure verification on the checkout step</string>
 ```
 
 ## 1. Init Tabby when your app starts (AppDelegete or @main)
