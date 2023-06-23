@@ -38,24 +38,24 @@ struct CheckoutPayment: Codable {
 
 struct Configuration: Codable {
     var availableProducts: [String: [AvailableProduct]]
-    var products: [String: [Product]]
+//    var products: [String: [Product]]
     
     enum CodingKeys: String, CodingKey {
         case availableProducts = "available_products"
-        case products
+//        case products
     }
 }
 
-struct Product: Codable {
-    var type: TabbyProductType
-    var isAvailable: Bool
-    var rejectionReason: String
-    enum CodingKeys: String, CodingKey {
-        case isAvailable = "is_available"
-        case type
-        case rejectionReason = "rejection_reason"
-    }
-}
+//struct Product: Codable {
+//    var type: TabbyProductType
+//    var isAvailable: Bool
+//    var rejectionReason: String
+//    enum CodingKeys: String, CodingKey {
+//        case isAvailable = "is_available"
+//        case type
+//        case rejectionReason = "rejection_reason"
+//    }
+//}
 
 struct AvailableProduct: Codable {
     var webUrl: String
