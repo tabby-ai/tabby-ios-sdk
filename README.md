@@ -2,7 +2,7 @@
 
 ## Requirements
 
-iOS 13.0+
+iOS 14.0+
 Swift 5.3+
 Xcode 12.0+
 
@@ -12,7 +12,7 @@ Xcode 12.0+
 
 ```
 dependencies: [
-    .package(url: "https://github.com/tabby-ai/tabby-ios-sdk.git", .upToNextMajor(from: "1.5.0"))
+    .package(url: "https://github.com/tabby-ai/tabby-ios-sdk.git", .upToNextMajor(from: "1.6.1"))
 ]
 
 ```
@@ -28,6 +28,8 @@ Feel free to edit descriptions according to your App
 <string>This allows Tabby to take a photo</string>
 <key>NSPhotoLibraryUsageDescription</key>
 <string>This allows Tabby to select a photo</string>
+<key>NSMicrophoneUsageDescription</key>
+<string>For secure verification on the checkout step</string>
 ```
 
 ## 1. Init Tabby when your app starts (AppDelegete or @main)
@@ -92,9 +94,6 @@ in your CartScreenView etc in .onAppear or viewDidLoad
             if (s.tabbyProductTypes.contains(.installments)) {
                 self.isTabbyInstallmentsAvailable = true
             }
-            if (s.tabbyProductTypes.contains(.pay_later)) {
-                self.isTabbyPaylatersAvailable = true
-            }
         case .failure(let error):
             // Do something when Tabby checkout session POST requiest failed
             print(error)
@@ -145,7 +144,6 @@ if modal / sheet / seguway / NavigationLink / ViewController etc - whatever fits
 
 struct CheckoutExampleWithTabby: View {
     @State var isTabbyInstallmentsAvailable = false
-    @State var isTabbyPaylatersAvailable = false
 
     @State var openedProduct: TabbyProductType = .installments
     @State var isTabbyOpened: Bool = false
@@ -163,18 +161,6 @@ struct CheckoutExampleWithTabby: View {
                 }
             })
             .disabled(!isTabbyInstallmentsAvailable)
-
-            Button(action: {
-                openedProduct = .pay_later
-                isTabbyOpened = true
-            }, label: {
-                HStack {
-                    Text("My Tabby 'PayLater' fancy Button")
-                        .font(.headline)
-                        .foregroundColor(isTabbyPaylatersAvailable ? .black : .white)
-                }
-            })
-            .disabled(!isTabbyPaylatersAvailable)
 
         }
         .sheet(isPresented: $isTabbyOpened, content: {
@@ -219,10 +205,6 @@ struct CheckoutExampleWithTabby: View {
                     if (s.tabbyProductTypes.contains(.installments)) {
                         self.isTabbyInstallmentsAvailable = true
                     }
-                    // If you want to handle pay_later product - check for .pay_later in response
-                    if (s.tabbyProductTypes.contains(.pay_later)) {
-                        self.isTabbyPaylatersAvailable = true
-                    }
                 case .failure(let error):
                     // Do something when Tabby checkout session POST requiest failed
                     print(error)
@@ -256,7 +238,7 @@ import Tabby
 class ViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
-        if #available(iOS 13.0, *) {
+        if #available(iOS 14.0, *) {
             let vc = UIHostingController(
                 rootView: Tabby.TabbyProductPageSnippet(amount: 1990, currency: .SAR)
             )
@@ -288,7 +270,7 @@ import Tabby
 class ViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
-        if #available(iOS 13.0, *) {
+        if #available(iOS 14.0, *) {
             let vc = UIHostingController(
                 rootView: Tabby.TabbyCheckoutSnippet(amount: 2000, currency: .AED)
             )

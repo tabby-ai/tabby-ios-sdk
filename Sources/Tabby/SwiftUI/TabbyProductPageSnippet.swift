@@ -7,12 +7,7 @@
 
 import SwiftUI
 
-enum SnippetKind {
-    case common
-    case egypt
-}
-
-@available(iOS 13.0, macOS 11, *)
+@available(iOS 14.0, macOS 11, *)
 public struct TabbyProductPageSnippet: View {
     @State private var isOpened: Bool = false
     @Environment(\.layoutDirection) var direction
@@ -37,10 +32,9 @@ public struct TabbyProductPageSnippet: View {
     
     public var body: some View {
         let isRTL = direction == .rightToLeft
-        let kind: SnippetKind = currency == .EGP ? .egypt : .common
-        let textNode1 = kind == .common ? String(format: "snippetTitle1".localized) : String(format: "snippetTitle1EG".localized)
-        let textNode2 = kind == .common ? String(format: "snippetAmount".localized, "\((amount/4).withFormattedAmount)", "\(currency.localized(l: withCurrencyInArabic && isRTL ? .ar : nil))") : String(format: "snippetAmountEG".localized, "\((amount/4).withFormattedAmount)", "\(currency.localized(l: withCurrencyInArabic && isRTL ? .ar : nil))")
-        let textNode3 = kind == .common ? String(format: "snippetTitle2".localized) : String(format: "snippetTitle2EG".localized)
+        let textNode1 = String(format: "snippetTitle1".localized)
+        let textNode2 = String(format: "snippetAmount".localized, "\((amount/4).withFormattedAmount)", "\(currency.localized(l: withCurrencyInArabic && isRTL ? .ar : nil))")
+        let textNode3 =  String(format: "snippetTitle2".localized)
         
         let learnMoreText = String(format: "learnMore".localized)
         
@@ -96,15 +90,15 @@ public struct TabbyProductPageSnippet: View {
 
 // MARK: - PREVIEW
 
-@available(iOS 13.0, macOS 11, *)
+@available(iOS 14.0, macOS 11, *)
 struct TabbyProductPageSnippet_Previews: PreviewProvider {
     static var previews: some View {
         VStack {
-            TabbyProductPageSnippet(amount: 1990, currency: .EGP)
+            TabbyProductPageSnippet(amount: 1990, currency: .QAR)
             
             TabbyProductPageSnippet(amount: 1990, currency: .AED)
             
-            TabbyProductPageSnippet(amount: 1990, currency: .EGP)
+            TabbyProductPageSnippet(amount: 1990, currency: .QAR)
                 .environment(\.layoutDirection, .rightToLeft)
                 .environment(\.locale, Locale(identifier: "ar"))
             
