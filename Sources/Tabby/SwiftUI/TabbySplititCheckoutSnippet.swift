@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-@available(iOS 14.0, macOS 11, *)
+@available(iOS 13.0, macOS 11, *)
 public struct TabbySplititCheckoutSnippet: View {
   @Environment(\.layoutDirection) var direction
   @State private var isOpened: Bool = false
@@ -124,7 +124,7 @@ public struct TabbySplititCheckoutSnippet: View {
   }
 }
 
-@available(iOS 14.0, macOS 11, *)
+@available(iOS 13.0, macOS 11, *)
 struct TabbySplititCheckoutSnippetPreview: PreviewProvider {
   static var previews: some View {
     VStack {

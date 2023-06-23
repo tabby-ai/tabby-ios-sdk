@@ -51,7 +51,7 @@ public final class TabbySDK {
     }
 }
 
-@available(iOS 14.0, *)
+@available(iOS 13.0, *)
 public struct TabbyCheckout: View {
     @ObservedObject var checkout = TabbyCheckoutViewModel()
     

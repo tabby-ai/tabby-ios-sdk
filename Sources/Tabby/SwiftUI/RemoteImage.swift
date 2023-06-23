@@ -8,7 +8,7 @@
 import SwiftUI
 import Combine
 
-@available(iOS 14.0, *)
+@available(iOS 13.0, *)
 class ImgLoader: ObservableObject {
     var didChange = PassthroughSubject<Data, Never>()
     var data = Data() {
@@ -34,7 +34,7 @@ class ImgLoader: ObservableObject {
     }
 }
 
-@available(iOS 14.0, *)
+@available(iOS 13.0, *)
 struct ImageView: View {
     @ObservedObject var imageLoader: ImgLoader
     @State var image:UIImage = UIImage()
@@ -56,7 +56,7 @@ struct ImageView: View {
     }
 }
 
-@available(iOS 14.0, *)
+@available(iOS 13.0, *)
 struct Logo: View {
     @State var loaded = false
     
@@ -81,7 +81,7 @@ struct Logo: View {
     }
 }
 
-@available(iOS 14.0, *)
+@available(iOS 13.0, *)
 struct CirclePlaceholder: View {
     var body: some View {
         Rectangle()
@@ -92,7 +92,7 @@ struct CirclePlaceholder: View {
 }
 
 
-@available(iOS 14.0, *)
+@available(iOS 13.0, *)
 struct SegmentedCircle: View {
     @State var loaded = false
     var img: Images
@@ -113,7 +113,7 @@ struct SegmentedCircle: View {
     }
 }
 
-@available(iOS 14.0, *)
+@available(iOS 13.0, *)
 struct Logo_Previews: PreviewProvider {
     static var previews: some View {
         VStack {

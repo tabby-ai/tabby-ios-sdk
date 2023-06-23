@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-@available(iOS 14.0, macOS 11, *)
+@available(iOS 13.0, macOS 11, *)
 public struct TabbyProductPageSnippet: View {
     @State private var isOpened: Bool = false
     @Environment(\.layoutDirection) var direction
@@ -90,7 +90,7 @@ public struct TabbyProductPageSnippet: View {
 
 // MARK: - PREVIEW
 
-@available(iOS 14.0, macOS 11, *)
+@available(iOS 13.0, macOS 11, *)
 struct TabbyProductPageSnippet_Previews: PreviewProvider {
     static var previews: some View {
         VStack {
