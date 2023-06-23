@@ -31,7 +31,7 @@ public final class TabbySDK {
             )
             self.session = response
             let tabbyProductTypes = TabbyProductType.allCases.filter { item in
-                response.configuration.availableProducts[item.rawValue] != nil && response.status != .rejected && (response.warnings ?? []).isEmpty
+                response.configuration.availableProducts[item.rawValue] != nil
             }
             return (
                 sessionId: response.id,

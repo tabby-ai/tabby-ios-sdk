@@ -9,19 +9,19 @@ import Foundation
 
 struct CheckoutSession: Codable {
     var id: String
-    var warnings: [TabbyWarning]?
+//    var warnings: [TabbyWarning]?
     var configuration: Configuration
     var payment: CheckoutPayment
-    var rejectionReasonCode: String?
-    var status: TabbyStatus
+//    var rejectionReasonCode: String?
+//    var status: TabbyStatus
     
     enum CodingKeys: String, CodingKey {
         case id
-        case warnings
+//        case warnings
         case configuration
         case payment
-        case rejectionReasonCode = "rejection_reason_code"
-        case status
+//        case rejectionReasonCode = "rejection_reason_code"
+//        case status
     }
 }
 
