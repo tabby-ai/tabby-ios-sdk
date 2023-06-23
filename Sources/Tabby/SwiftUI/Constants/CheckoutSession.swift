@@ -9,8 +9,27 @@ import Foundation
 
 struct CheckoutSession: Codable {
     var id: String
+    var warnings: [TabbyWarning]?
     var configuration: Configuration
     var payment: CheckoutPayment
+    var rejectionReasonCode: String?
+    var status: TabbyStatus
+    
+    enum CodingKeys: String, CodingKey {
+        case id
+        case warnings
+        case configuration
+        case payment
+        case rejectionReasonCode = "rejection_reason_code"
+        case status
+    }
+}
+
+public enum TabbyStatus: String, Codable {
+    case created = "created"
+    case approved = "approved"
+    case rejected = "rejected"
+    case expired = "expired"
 }
 
 struct CheckoutPayment: Codable {
@@ -18,15 +37,27 @@ struct CheckoutPayment: Codable {
 }
 
 struct Configuration: Codable {
-    var availableProducts: [String: [Product]]
+    var availableProducts: [String: [AvailableProduct]]
+    var products: [String: [Product]]
     
     enum CodingKeys: String, CodingKey {
         case availableProducts = "available_products"
+        case products
     }
 }
 
-
 struct Product: Codable {
+    var type: TabbyProductType
+    var isAvailable: Bool
+    var rejectionReason: String
+    enum CodingKeys: String, CodingKey {
+        case isAvailable = "is_available"
+        case type
+        case rejectionReason = "rejection_reason"
+    }
+}
+
+struct AvailableProduct: Codable {
     var webUrl: String
     
     enum CodingKeys: String, CodingKey {
@@ -43,7 +74,8 @@ public enum TabbyResult: String {
 
 public enum TabbyProductType: String, Codable, CaseIterable {
     case installments = "installments"
-    case credit_card_installments = "credit_card_installments"
+    case creditCardInstallments = "credit_card_installments"
+    case monthlyBilling = "monthly_billing"
 }
 
 public struct TabbyCheckoutPayload: Codable {
@@ -81,4 +113,11 @@ struct CreatedCheckoutSession: Decodable {
         case status = "status"
         case payment = "payment"
     }
+}
+
+struct TabbyWarning: Codable {
+    var field: String
+    var code: String
+    var message: String
+    var name: String
 }

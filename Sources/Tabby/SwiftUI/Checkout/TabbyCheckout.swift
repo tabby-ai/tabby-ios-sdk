@@ -8,7 +8,7 @@
 import SwiftUI
 
 public final class TabbySDK {
-    public typealias SessionCompletion = Result<(sessionId: String, paymentId: String, tabbyProductTypes: [TabbyProductType]), CheckoutError>
+    public typealias SessionCompletion = (sessionId: String, paymentId: String, tabbyProductTypes: [TabbyProductType])
     
     public static var shared = TabbySDK()
     
@@ -21,33 +21,26 @@ public final class TabbySDK {
         self.env = env
     }
     
-    public func configure(forPayment payload: TabbyCheckoutPayload, completion: @escaping (SessionCompletion) -> ()) {
-        Api.shared.createSession(payload: payload, apiKey: TabbySDK.shared.apiKey, env: self.env, completed: { result in
-            DispatchQueue.main.async {
-                switch result {
-                case .success(let s):
-                    self.session = s
-                    var tabbyProductTypes: [TabbyProductType] = []
-                    
-                    for key in TabbyProductType.allCases {
-                        if s.configuration.availableProducts[key.rawValue] != nil {
-                            tabbyProductTypes.append(key)
-                        }
-                    }
-
-                    let res: (sessionId: String, paymentId: String, tabbyProductTypes: [TabbyProductType]) = (
-                        sessionId: s.id,
-                        paymentId: s.payment.id,
-                        tabbyProductTypes: tabbyProductTypes
-                    )
-                    completion(.success(res))
-                    
-                case .failure(let error):
-                    print(error.localizedDescription)
-                    completion(.failure(error))
-                }
+    public func configure(forPayment payload: TabbyCheckoutPayload) async throws -> SessionCompletion {
+        
+        do {
+            let response = try await Api.shared.createSession(
+                payload: payload,
+                apiKey: TabbySDK.shared.apiKey,
+                env: env
+            )
+            let tabbyProductTypes = TabbyProductType.allCases.filter { item in
+                response.configuration.availableProducts[item.rawValue] != nil && response.status != .rejected
             }
-        })
+            return (
+                sessionId: response.id,
+                paymentId: response.payment.id,
+                tabbyProductTypes: tabbyProductTypes
+            )
+        } catch {
+            print(error.localizedDescription)
+            throw error
+        }
     }
 }
 
@@ -107,15 +100,15 @@ public struct TabbyCheckout: View {
     
     public var body: some View {
         HStack {
-            if (productType == .installments) {
+            if productType == .installments {
                 CheckoutWebView(
                     productType: .installments,
                     url: self.checkout.installmentsURL,
                     vc: self.checkout
                 )
-            }  else if (productType == .credit_card_installments) {
+            } else if productType == .creditCardInstallments {
                 CheckoutWebView(
-                    productType: .credit_card_installments,
+                    productType: .creditCardInstallments,
                     url: self.checkout.creditCardInstallmentsURL,
                     vc: self.checkout
                 )
