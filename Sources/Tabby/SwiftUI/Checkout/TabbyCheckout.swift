@@ -29,8 +29,9 @@ public final class TabbySDK {
                 apiKey: TabbySDK.shared.apiKey,
                 env: env
             )
+            self.session = response
             let tabbyProductTypes = TabbyProductType.allCases.filter { item in
-                response.configuration.availableProducts[item.rawValue] != nil && response.status != .rejected
+                response.configuration.availableProducts[item.rawValue] != nil && response.status != .rejected && (response.warnings ?? []).isEmpty
             }
             return (
                 sessionId: response.id,
