@@ -26,7 +26,9 @@ let package = Package(
         .target(
             name: "Tabby",
             dependencies: [],
-            resources: [.process("Resources")]
+            resources: [
+                .process("Resources")
+            ]
         ),
     ]
 )
