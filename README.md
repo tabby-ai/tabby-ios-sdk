@@ -12,7 +12,7 @@ Xcode 12.0+
 
 ```
 dependencies: [
-    .package(url: "https://github.com/tabby-ai/tabby-ios-sdk.git", .upToNextMajor(from: "1.6.1"))
+    .package(url: "https://github.com/tabby-ai/tabby-ios-sdk.git", .upToNextMajor(from: "1.6.3"))
 ]
 
 ```
