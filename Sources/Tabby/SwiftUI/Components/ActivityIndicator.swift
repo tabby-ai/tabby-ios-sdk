@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-@available(iOS 14.0, *)
+@available(iOS 13.0, *)
 struct ActivityIndicator: UIViewRepresentable {
     let style: UIActivityIndicatorView.Style
     
@@ -20,7 +20,7 @@ struct ActivityIndicator: UIViewRepresentable {
     }
 }
 
-@available(iOS 14.0, *)
+@available(iOS 13.0, *)
 struct ActivityIndicator_Preview: PreviewProvider {
   static var previews: some View {
     ActivityIndicator(style: .large)

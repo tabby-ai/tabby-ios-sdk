@@ -15,9 +15,9 @@ public enum Images {
     case circle4
 }
 
-let imgUrls: [Images:String] = [
+let imgUrls: [Images: String] = [
     Images.logo: "https://cdn.tabby.ai/assets/logoimg.png",
-    Images.circle1:  "https://cdn.tabby.ai/assets/R1-black.png",
+    Images.circle1: "https://cdn.tabby.ai/assets/R1-black.png",
     Images.circle2: "https://cdn.tabby.ai/assets/R2-black.png",
     Images.circle3: "https://cdn.tabby.ai/assets/R3-black.png",
     Images.circle4: "https://cdn.tabby.ai/assets/R4-black.png"
