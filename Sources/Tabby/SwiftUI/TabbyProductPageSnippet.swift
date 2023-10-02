@@ -43,17 +43,13 @@ public struct TabbyProductPageSnippet: View {
                 HStack(alignment: .top) {
                     VStack(alignment: .leading) {
                         Text(textNode1)
-                            .foregroundColor(textPrimaryColor)
-                            .font(.system(size: 14))
+                            .tabbyStyle(.interBody)
                         + Text(textNode2)
-                            .foregroundColor(textPrimaryColor)
-                            .font(.system(size: 14, weight: .bold))
+                            .tabbyStyle(.interBodyBold)
                         + Text(textNode3)
-                            .foregroundColor(textPrimaryColor)
-                            .font(.system(size: 14))
+                            .tabbyStyle(.interBody)
                         + Text(learnMoreText)
-                            .foregroundColor(textPrimaryColor)
-                            .font(.system(size: 14))
+                            .tabbyStyle(.interBody)
                         
                             .underline()
                         

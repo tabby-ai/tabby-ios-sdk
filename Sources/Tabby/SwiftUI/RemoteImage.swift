@@ -36,6 +36,7 @@ class ImgLoader: ObservableObject {
 
 @available(iOS 13.0, *)
 struct ImageView: View {
+        
     @ObservedObject var imageLoader: ImgLoader
     @State var image:UIImage = UIImage()
     @Binding var loaded: Bool
@@ -94,22 +95,75 @@ struct CirclePlaceholder: View {
 
 @available(iOS 13.0, *)
 struct SegmentedCircle: View {
-    @State var loaded = false
-    var img: Images
+    
+    enum State {
+        case q25
+        case q50
+        case q75
+        case q100
+    }
+    
+    var state: State
+    
+    private let size: CGFloat = 40
+    private let padding: CGFloat = 5
+    
+    init(state: State) {
+        self.state = state
+    }
     
     var body: some View {
-        ImageView(withURL: imgUrls[img]!, loaded: $loaded)
-            .scaledToFit()
-            .frame(width: 40, height: 40)
+        Circle()
+            .stroke(lineWidth: 1)
+            .foregroundColor(segmentedCircleColor)
+            .frame(width: size, height: size)
             .overlay(
                 Group {
-                    if (loaded) {
-                        EmptyView()
-                    } else {
-                        CirclePlaceholder()
+                    switch state {
+                    case .q25:
+                        Path { path in
+                            path.move(to: CGPoint(x: size / 2.0, y: size / 2.0))
+                            path.addArc(
+                                center: CGPoint(x: size / 2.0, y: size / 2.0),
+                                radius: (size - padding) / 2,
+                                startAngle: .degrees(0),
+                                endAngle: .degrees(-90),
+                                clockwise: true
+                            )
+                        }
+                        .fill(segmentedCircleColor)
+                    case .q50:
+                        Path { path in
+                            path.move(to: CGPoint(x: size / 2.0, y: size / 2.0))
+                            path.addArc(
+                                center: CGPoint(x: size / 2.0, y: size / 2.0),
+                                radius: (size - padding) / 2,
+                                startAngle: .degrees(90),
+                                endAngle: .degrees(-90),
+                                clockwise: true
+                            )
+                        }
+                        .fill(segmentedCircleColor)
+                    case .q75:
+                        Path { path in
+                            path.move(to: CGPoint(x: size / 2.0, y: size / 2.0))
+                            path.addArc(
+                                center: CGPoint(x: size / 2.0, y: size / 2.0),
+                                radius: (size - padding) / 2,
+                                startAngle: .degrees(180),
+                                endAngle: .degrees(-90),
+                                clockwise: true
+                            )
+                        }
+                        .fill(segmentedCircleColor)
+                    case .q100:
+                        Circle()
+                            .foregroundColor(segmentedCircleColor)
+                            .frame(width: size - padding, height: size - padding)
                     }
                 }
             )
+            .padding(0.5)
     }
 }
 
@@ -118,10 +172,10 @@ struct Logo_Previews: PreviewProvider {
     static var previews: some View {
         VStack {
             Logo()
-            SegmentedCircle(img: .circle1)
-            SegmentedCircle(img: .circle2)
-            SegmentedCircle(img: .circle3)
-            SegmentedCircle(img: .circle4)
+            SegmentedCircle(state: .q25)
+            SegmentedCircle(state: .q50)
+            SegmentedCircle(state: .q75)
+            SegmentedCircle(state: .q100)
         }
         .previewLayout(.sizeThatFits)
     }

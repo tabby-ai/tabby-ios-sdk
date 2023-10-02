@@ -87,6 +87,7 @@ public struct TabbyCreditCardInstallmentsSnippet: View {
   }
 }
 
+@available(iOS 14.0, *)
 struct TabbyCreditCardInstallmentsSnippetPreview: PreviewProvider {
   static var previews: some View {
     VStack{
