@@ -156,52 +156,119 @@ public struct BuyerHistory: Codable {
   }
 }
 
-/// Merchant-defined data about the payment.
-public struct Meta: Codable {
-    public let orderId: String?
-    public let customer: String?
-    
-    enum CodingKeys: String, CodingKey {
-        case orderId = "order_id"
-        case customer
-    }
-    
-    public init(orderId: String? = nil, customer: String? = nil) {
-        self.orderId = orderId
-        self.customer = customer
-    }
-}
-
 public struct Payment: Codable {
-  public let amount: String
-  public let currency: Currency
-  public let description: String?
-  public let buyer: Buyer
-  public let buyer_history: BuyerHistory
-  public let order: Order
-  public let order_history: [OrderHistory]
-  public let meta: Meta?
-  public let shipping_address: ShippingAddress
-  
-  public init(
-    amount: String,
-    currency: Currency,
-    description: String? = nil,
-    buyer: Buyer,
-    buyer_history: BuyerHistory,
-    order: Order,
-    order_history: [OrderHistory],
-    meta: Meta? = nil,
-    shipping_address: ShippingAddress
-  ) {
-    self.amount = amount
-    self.currency = currency
-    self.description = description
-    self.buyer = buyer
-    self.buyer_history = buyer_history
-    self.order = order
-    self.order_history = order_history
-    self.meta = meta
-    self.shipping_address = shipping_address
-  }
+    
+    /// Total payment amount, including tax, shipping and any discounts. Allows to send up to 2 decimals for AED, SAR, QAR; up to 3 decimals for KWD and BHD.
+    public let amount: String
+    public let currency: Currency
+    public let description: String?
+    public let buyer: Buyer
+    public let buyer_history: BuyerHistory
+    public let order: Order
+    public let order_history: [OrderHistory]
+    public let meta: [String: Any]?
+    public let shipping_address: ShippingAddress
+    
+    /// Initialize Payment with Codable meta type
+    /// - Parameters:
+    ///   - amount: Total payment amount, including tax, shipping and any discounts. Allows to send up to 2 decimals for AED, SAR, QAR; up to 3 decimals for KWD and BHD.
+    ///   - meta: Key-value pair of any data that you want to attach to the payment. Can be used to store order ID, customer ID, etc.
+    /// - Example:
+    /// ```
+    /// Payment(amount: "10.00", ..., meta: ["orderId": "123456"])
+    /// ```
+    public init(
+        amount: String,
+        currency: Currency,
+        description: String? = nil,
+        buyer: Buyer,
+        buyer_history: BuyerHistory,
+        order: Order,
+        order_history: [OrderHistory],
+        meta: [String: Any]? = nil,
+        shipping_address: ShippingAddress
+    ) {
+        self.amount = amount
+        self.currency = currency
+        self.description = description
+        self.buyer = buyer
+        self.buyer_history = buyer_history
+        self.order = order
+        self.order_history = order_history
+        self.meta = meta
+        self.shipping_address = shipping_address
+    }
+    
+    /// Initialize Payment with Codable meta type
+    /// Example:
+    /// ```
+    /// struct Meta: Codable {
+    ///    let orderId: String
+    ///    let customer: String
+    /// }
+    public init<MetaType: Codable>(
+        amount: String,
+        currency: Currency,
+        description: String? = nil,
+        buyer: Buyer,
+        buyer_history: BuyerHistory,
+        order: Order,
+        order_history: [OrderHistory],
+        meta: MetaType,
+        shipping_address: ShippingAddress
+    ) throws {
+        self.amount = amount
+        self.currency = currency
+        self.description = description
+        self.buyer = buyer
+        self.buyer_history = buyer_history
+        self.order = order
+        self.order_history = order_history
+        self.meta = try meta.toDictionary()
+        self.shipping_address = shipping_address
+    }
+    
+    public enum CodingKeys: String, CodingKey {
+        case amount
+        case currency
+        case description
+        case buyer
+        case buyer_history
+        case order
+        case order_history
+        case meta
+        case shipping_address
+    }
+    
+    public init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        
+        amount = try container.decode(String.self, forKey: .amount)
+        currency = try container.decode(Currency.self, forKey: .currency)
+        description = try container.decode(String.self, forKey: .description)
+        buyer = try container.decode(Buyer.self, forKey: .buyer)
+        buyer_history = try container.decode(BuyerHistory.self, forKey: .buyer_history)
+        order = try container.decode(Order.self, forKey: .order)
+        order_history = try container.decode([OrderHistory].self, forKey: .order_history)
+        meta = try container.decode(AnyCodable.self, forKey: .meta).value as? [String: Any]
+        shipping_address = try container.decode(ShippingAddress.self, forKey: .shipping_address)
+    }
+    
+    public func encode(to encoder: Encoder) throws {
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        try container.encode(amount, forKey: .amount)
+        try container.encode(currency, forKey: .currency)
+        try container.encode(description, forKey: .description)
+        try container.encode(buyer, forKey: .buyer)
+        try container.encode(buyer_history, forKey: .buyer_history)
+        try container.encode(order, forKey: .order)
+        try container.encode(order_history, forKey: .order_history)
+        
+        
+        if let meta = meta {
+            try container.encode(AnyCodable(meta), forKey: .meta)
+        }
+        
+        try container.encode(shipping_address, forKey: .shipping_address)
+    }
 }
