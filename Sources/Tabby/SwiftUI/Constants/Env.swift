@@ -23,4 +23,12 @@ public enum Constants {
         }
     }
     
+    static func analyticsBaseURL(for env: Env) -> String {
+        switch env {
+        case .stage:
+            return "https://dp-event-collector.tabby.dev/v1/t"
+        case .prod:
+            return "https://dp-event-collector.tabby.ai/v1/t"
+        }
+    }
 }

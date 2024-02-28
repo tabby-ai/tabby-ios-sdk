@@ -8,9 +8,12 @@
 import SwiftUI
 
 public final class TabbySDK {
+    
     public typealias SessionCompletion = Result<(sessionId: String, paymentId: String, tabbyProductTypes: [TabbyProductType]), CheckoutError>
     
     public static var shared = TabbySDK()
+    
+    private let analyticsService = AnalyticsService.shared
     
     fileprivate var apiKey: String = ""
     fileprivate var env: Env = .prod
@@ -19,6 +22,11 @@ public final class TabbySDK {
     public func setup(withApiKey apiKey: String, forEnv env: Env = .prod) {
         self.apiKey = apiKey
         self.env = env
+                
+        self.analyticsService.baseURL = Constants.analyticsBaseURL(for: env)
+        self.analyticsService.setContextItem(
+            .tabbySDK(apiKey: apiKey)
+        )
     }
     
     public func configure(forPayment payload: TabbyCheckoutPayload, completion: @escaping (SessionCompletion) -> ()) {
