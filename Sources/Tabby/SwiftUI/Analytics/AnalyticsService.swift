@@ -14,6 +14,7 @@ final public class AnalyticsService {
     
     private let dateFormatter = ISO8601DateFormatter()
     private let networkService: NetworkService
+    private let sessionId: String = UUID().uuidString
     
     private var context = AnalyticsContext()
     
@@ -58,7 +59,7 @@ final public class AnalyticsService {
     
     private func preparePayload(event: AnalyticsEvent) -> Encodable {
         [
-            "anonymousId": UUID().uuidString,
+            "anonymousId": sessionId,
             "messageId": UUID().uuidString,
             "properties": (event.payload ?? [:]).merging(context.build()) { (old, _) in old },
             "mobileSDK": true,
