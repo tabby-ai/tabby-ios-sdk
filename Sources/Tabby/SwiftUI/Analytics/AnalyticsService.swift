@@ -12,7 +12,12 @@ final public class AnalyticsService {
     
     // MARK: - Private
     
-    private let dateFormatter = ISO8601DateFormatter()
+    private let dateFormatter: ISO8601DateFormatter = {
+        let formatter = ISO8601DateFormatter()
+        formatter.formatOptions = [.withInternetDateTime, .withFractionalSeconds]
+        return formatter
+    }()
+        
     private let networkService: NetworkService
     private let sessionId: String = UUID().uuidString
     
