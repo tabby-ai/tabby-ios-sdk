@@ -12,6 +12,8 @@ public struct TabbyProductPageSnippet: View {
     @State private var isOpened: Bool = false
     @Environment(\.layoutDirection) var direction
     
+    private let analyticsService = AnalyticsService.shared
+    
     func toggleOpen() -> Void {
         isOpened.toggle()
     }
@@ -19,21 +21,31 @@ public struct TabbyProductPageSnippet: View {
     let amount: Double
     let currency: Currency
     let withCurrencyInArabic: Bool
-    var urls: (String, String) = ("", "")
+    
+    private let installmentsCount = 4
+    
+    private var isRTL: Bool {
+        direction == .rightToLeft
+    }
+    
+    private var pageURL: String {
+        let baseURL = isRTL ? WebViewBaseURL.Tabby.ar : WebViewBaseURL.Tabby.en
+        return "\(baseURL)?price=\(amount)&currency=\(currency.rawValue)&source=sdk"
+    }
+    
+    private var pageLang: Lang {
+        isRTL ? .ar : .en
+    }
     
     public init(amount: Double, currency: Currency, preferCurrencyInArabic: Bool? = nil) {
         self.amount = amount
         self.currency = currency
         self.withCurrencyInArabic = preferCurrencyInArabic ?? false
-        let urlEn =  "\(webViewUrls[.en]!)?price=\(amount)&currency=\(currency.rawValue)&source=sdk"
-        let urlAr =  "\(webViewUrls[.ar]!)?price=\(amount)&currency=\(currency.rawValue)&source=sdk"
-        self.urls = (urlEn, urlAr)
     }
     
     public var body: some View {
-        let isRTL = direction == .rightToLeft
         let textNode1 = String(format: "snippetTitle1".localized)
-        let textNode2 = String(format: "snippetAmount".localized, "\((amount/4).withFormattedAmount)", "\(currency.localized(l: withCurrencyInArabic && isRTL ? .ar : nil))")
+        let textNode2 = String(format: "snippetAmount".localized, "\((amount/Double(installmentsCount)).withFormattedAmount)", "\(currency.localized(l: withCurrencyInArabic && isRTL ? .ar : nil))")
         let textNode3 =  String(format: "snippetTitle2".localized)
         
         let learnMoreText = String(format: "learnMore".localized)
@@ -74,11 +86,20 @@ public struct TabbyProductPageSnippet: View {
             .padding(.horizontal, 16)
             .environment(\.layoutDirection, isRTL ? .rightToLeft : .leftToRight)
             .onTapGesture {
+                analyticsService.send(event: .LearnMore.clicked(currency: currency, installmentsCount: installmentsCount))
                 toggleOpen()
             }
         }
-        .sheet(isPresented: $isOpened, content: {
-            SafariView(lang: isRTL ? Lang.ar : Lang.en, customUrl: isRTL ? self.urls.1 : self.urls.0)
+        .sheet(isPresented: $isOpened, onDismiss: {
+            analyticsService.send(event: .LearnMore.popUpClosed(currency: currency, installmentsCount: installmentsCount))
+        }, content: {
+            SafariView(lang: pageLang, customUrl: pageURL)
+                .onAppear(perform: {
+                    analyticsService.send(event: .LearnMore.popUpOpened(currency: currency, installmentsCount: installmentsCount))
+                })
+        })
+        .onAppear(perform: {
+            analyticsService.send(event: .SnippedCard.rendered(currency: currency, installmentsCount: installmentsCount))
         })
     }
 }
