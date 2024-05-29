@@ -77,18 +77,18 @@ public struct Order: Codable {
 }
 
 public enum OrderItemPaymentMethod: String, Codable {
-  case card = "card"
-  case cod = "cod"
+    case card = "card"
+    case cod = "cod"
 }
 
 public enum OrderItemStatus: String, Codable {
-  case new = "new"
-  case processing = "processing"
-  case complete = "complete"
-  case refunded = "refunded"
-  case canceled = "canceled"
-  case unknown = "unknown"
-  
+    case new = "new"
+    case processing = "processing"
+    case complete = "complete"
+    case refunded = "refunded"
+    case canceled = "canceled"
+    case unknown = "unknown"
+    
 }
 
 public struct OrderHistory: Codable {
@@ -120,15 +120,15 @@ public struct OrderHistory: Codable {
 }
 
 public struct ShippingAddress: Codable {
-  public let address: String
-  public let city: String
-  public let zip: String
-  
-  public init(address: String, city: String, zip: String) {
-    self.address = address
-    self.city = city
-    self.zip = zip
-  }
+    public let address: String
+    public let city: String
+    public let zip: String
+    
+    public init(address: String, city: String, zip: String) {
+        self.address = address
+        self.city = city
+        self.zip = zip
+    }
 }
 
 public struct BuyerHistory: Codable {

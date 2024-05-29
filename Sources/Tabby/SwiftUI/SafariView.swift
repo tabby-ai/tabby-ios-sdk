@@ -8,7 +8,7 @@
 import SwiftUI
 import SafariServices
 
-@available(iOS 14.0, *)
+@available(iOS 13.0, *)
 struct SafariView: UIViewControllerRepresentable {
     let lang: Lang
     let link: String

@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-@available(iOS 14.0, macOS 11, *)
+@available(iOS 13.0, macOS 11, *)
 public struct TabbyCheckoutSnippet: View {
     @Environment(\.layoutDirection) var direction
     
@@ -153,7 +153,7 @@ public struct TabbyCheckoutSnippet: View {
     }
 }
 
-@available(iOS 14.0, macOS 11, *)
+@available(iOS 13.0, macOS 11, *)
 struct DividerLine: View {
     var visible: Bool
     
@@ -164,7 +164,7 @@ struct DividerLine: View {
     }
 }
 
-@available(iOS 14.0, macOS 11, *)
+@available(iOS 13.0, macOS 11, *)
 struct InstallmentSnippetView_Preview: PreviewProvider {
     static var previews: some View {
                 

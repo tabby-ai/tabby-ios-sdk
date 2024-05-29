@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-@available(iOS 14.0, macOS 11, *)
+@available(iOS 13.0, macOS 11, *)
 public struct TabbyCreditCardInstallmentsSnippet: View {
     @Environment(\.layoutDirection) var direction
     @State private var isOpened: Bool = false
@@ -116,7 +116,7 @@ public struct TabbyCreditCardInstallmentsSnippet: View {
     }
 }
 
-@available(iOS 14.0, *)
+@available(iOS 13.0, *)
 struct TabbyCreditCardInstallmentsSnippetPreview: PreviewProvider {
   static var previews: some View {
     VStack{
