@@ -10,14 +10,11 @@ import Foundation
 final class Api {
     static let shared = Api()
     
-    private let createSessionUrlProd = "https://api.tabby.ai/api/v2/checkout"
-    private let createSessionUrlStage = "https://api.tabby.dev/api/v2/checkout"
-    
     private init() {}
     
     func createSession(payload: TabbyCheckoutPayload, apiKey: String, env: Env) async throws -> CheckoutSession {
         
-        let createSessionUrl = env == .prod ? createSessionUrlProd : createSessionUrlStage
+        let createSessionUrl = Constants.checkoutBaseURL(for: env)
         guard let url = URL(string: createSessionUrl) else {
             throw CheckoutError.invalidUrl
         }
@@ -25,6 +22,7 @@ final class Api {
         request.httpMethod = "POST"
         request.setValue("application/json", forHTTPHeaderField: "Content-Type")
         request.setValue("application/json", forHTTPHeaderField: "Accept")
+        request.setValue("iOS/\(version)", forHTTPHeaderField: "X-SDK-Version")
         request.setValue("Bearer \(apiKey)", forHTTPHeaderField: "Authorization")
         
         var jsonBody: String = ""
@@ -32,7 +30,7 @@ final class Api {
             let jsonData = try JSONEncoder().encode(payload)
             jsonBody = String(data: jsonData, encoding: .utf8)!
         } catch {
-            throw CheckoutError.invalidData
+            throw CheckoutError.unableToComplete
         }
         request.httpBody = jsonBody.data(using: String.Encoding.utf8)
         

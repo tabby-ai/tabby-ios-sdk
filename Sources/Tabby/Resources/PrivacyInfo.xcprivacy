@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+    <!-- 
+    ## NSPrivacyTracking
+    "third-party SDK uses data for tracking as defined under the App Tracking Transparency framework."
+    See section "Asking permission to track" in this webpage: https://developer.apple.com/app-store/user-privacy-and-data-use/
+    -->
+    <key>NSPrivacyTracking</key>
+    <false/>
+
+    <!-- 
+    ## NSPrivacyTrackingDomains
+    Because we use NSPrivacyTracking=false, this section is not required.
+    <key>NSPrivacyTrackingDomains</key>
+    -->
+    
+    <!--
+    ## NSPrivacyCollectedDataTypes
+    Docs for this section: https://developer.apple.com/documentation/bundleresources/privacy_manifest_files/describing_data_use_in_privacy_manifests
+    This section is describing what information our SDK collects about the app user.
+    
+    It's my understanding that this section is for what our SDK collects automatically, not the data a customer passes to our SDK. Therefore, if a piece of data is passed to our SDK, use `false`.
+    Customers must create their own privacy file for what their app collects and provide that to Apple. That's where customers report what data they are passing to our SDK.
+   -->
+    <key>NSPrivacyCollectedDataTypes</key>
+    <array>
+      <dict>
+        <key>NSPrivacyCollectedDataType</key>
+        <string>NSPrivacyCollectedDataTypeProductInteraction</string>
+        <key>NSPrivacyCollectedDataTypeLinked</key>
+        <false />
+        <key>NSPrivacyCollectedDataTypeTracking</key>
+        <false />
+        <key>NSPrivacyCollectedDataTypePurposes</key>
+        <array>
+          <string>NSPrivacyCollectedDataTypePurposeAnalytics</string>
+        </array>
+      </dict>
+    </array>
+    <key>NSPrivacyAccessedAPITypes</key>
+    <array />
+
+    <!--
+    Document on this section: https://developer.apple.com/documentation/bundleresources/privacy_manifest_files/describing_use_of_required_reason_api
+    Documents if our SDK uses certain system calls and why. Prevents SDK using fingerprinting.
+    -->
+    <key>NSPrivacyAccessedAPITypes</key>
+    <array />
+</dict>
+</plist>

@@ -9,119 +9,151 @@ import SwiftUI
 
 @available(iOS 13.0, macOS 11, *)
 public struct TabbySplititCheckoutSnippet: View {
-  @Environment(\.layoutDirection) var direction
-  @State private var isOpened: Bool = false
-  
-  func toggleOpen() -> Void {
-    isOpened.toggle()
-  }
-  
-  let amount: Double
-  let currency: Currency
-  let withCurrencyInArabic: Bool
-  let splitPeriod: Int?
-  var urls: (String, String) = ("", "")
-  
-  public init(
-    amount: Double,
-    currency: Currency,
-    url: String? = nil,
-    splitPeriod: SplitPeriod? = .of4,
-    preferCurrencyInArabic: Bool? = nil
-  ) {
-    self.amount = amount
-    self.currency = currency
-    self.withCurrencyInArabic = preferCurrencyInArabic ?? false
-    self.splitPeriod = Int(splitPeriod!.rawValue)
+    @Environment(\.layoutDirection) var direction
+    @State private var isOpened: Bool = false
+
+    private let analyticsService = AnalyticsService.shared
     
-    if let passedUrl = url {
-      self.urls = (passedUrl, passedUrl)
-    } else {
-      let urlEn =  "\(splititWebViewUrls[.en]!)?price=\(amount)&currency=\(currency.rawValue)&splitPeriod=\(Int(splitPeriod!.rawValue))"
-      let urlAr =  "\(splititWebViewUrls[.ar]!)?price=\(amount)&currency=\(currency.rawValue)&splitPeriod=\(Int(splitPeriod!.rawValue))"
-      self.urls = (urlEn, urlAr)
+    func toggleOpen() -> Void {
+        isOpened.toggle()
+    }
+
+    let amount: Double
+    let currency: Currency
+    let withCurrencyInArabic: Bool
+    let splitPeriod: Int
+    var urls: (String, String) = ("", "")
+
+    private var overwritenURL: String?
+    private var pageURL: String {
+        if let overwritenURL {
+            return overwritenURL
+        }
+        
+        let baseURL = isRTL ? WebViewBaseURL.Splitit.ar : WebViewBaseURL.Splitit.en
+        return "\(baseURL)?price=\(amount)&currency=\(currency.rawValue)&splitPeriod=\(splitPeriod)"
     }
     
+    private var isRTL: Bool {
+        direction == .rightToLeft
+    }
     
-  }
-  
-  public var body: some View {
-    let isRTL = direction == .rightToLeft
-    print ("isRTL \(isRTL)")
-    let noFeesText = String(format: "noFeesCreditCard".localized)
-    let remainingHeld = String(format: "remainingHeld".localized)
-    let chargedToday = String(format: "chargedToday".localized)
-    let learnMore = String(format: "learnMore".localized)
+    private var pageLang: Lang {
+        isRTL ? .ar : .en
+    }
     
-    return ZStack {
-      VStack(alignment: .leading) {
-        HStack(alignment: .top) {
+    public init(
+        amount: Double,
+        currency: Currency,
+        url: String? = nil,
+        splitPeriod: SplitPeriod = .of4,
+        preferCurrencyInArabic: Bool? = nil
+    ) {
+        self.amount = amount
+        self.currency = currency
+        self.withCurrencyInArabic = preferCurrencyInArabic ?? false
+        self.splitPeriod = splitPeriod.rawValue
+
+        if let url {
+          self.overwritenURL = url
+        }
+    }
+    
+    private var learnMoreText: String {
+        String(format: "learnMore".localized)
+    }
+    
+    private var remainingHeld: String {
+        String(format: "remainingHeld".localized)
+    }
+    
+    private var chargedToday: String {
+        String(format: "chargedToday".localized)
+    }
+    
+    private var noFeesText: String {
+        String(format: "noFeesCreditCard".localized)
+    }
+
+    public var body: some View {
+        ZStack {
           VStack(alignment: .leading) {
-            VStack(alignment: .leading, spacing: 16) {
-              Text(noFeesText)
-                .foregroundColor(textPrimaryColor)
-                .font(.footnote)
-              
-              HStack {
-                VStack(alignment: .leading, spacing: 4) {
-                  Text(chargedToday)
+            HStack(alignment: .top) {
+              VStack(alignment: .leading) {
+                VStack(alignment: .leading, spacing: 16) {
+                  Text(noFeesText)
                     .foregroundColor(textPrimaryColor)
                     .font(.footnote)
-                    .bold()
-                  if(isRTL) {
-                    Text("\(currency.rawValue) \(amount/Double(splitPeriod!), specifier: "%.2f")")
-                      .foregroundColor(textPrimaryColor)
-                      .font(.subheadline)
-                  } else {
-                    Text("\(amount/(Double(splitPeriod!)), specifier: "%.2f") \(currency.rawValue)")
-                      .foregroundColor(textPrimaryColor)
-                      .font(.subheadline)
+                  
+                  HStack {
+                    VStack(alignment: .leading, spacing: 4) {
+                      Text(chargedToday)
+                        .foregroundColor(textPrimaryColor)
+                        .font(.footnote)
+                        .bold()
+                      if(isRTL) {
+                        Text("\(currency.rawValue) \(amount/Double(splitPeriod), specifier: "%.2f")")
+                          .foregroundColor(textPrimaryColor)
+                          .font(.subheadline)
+                      } else {
+                        Text("\(amount/(Double(splitPeriod)), specifier: "%.2f") \(currency.rawValue)")
+                          .foregroundColor(textPrimaryColor)
+                          .font(.subheadline)
+                      }
+                      
+                    }
+                    VStack(alignment: .leading, spacing: 4) {
+                      Text(remainingHeld)
+                        .foregroundColor(textPrimaryColor)
+                        .font(.footnote)
+                        .bold()
+                      if(isRTL) {
+                        Text("\(currency.rawValue) \(amount/Double(splitPeriod) * (Double(splitPeriod) - 1), specifier: "%.2f")")
+                          .foregroundColor(textPrimaryColor)
+                          .font(.subheadline)
+                      } else {
+                        Text("\(amount/Double(splitPeriod) * (Double(splitPeriod) - 1), specifier: "%.2f") \(currency.rawValue)")
+                          .foregroundColor(textPrimaryColor)
+                          .font(.subheadline)
+                      }
+                    }
                   }
                   
-                }
-                VStack(alignment: .leading, spacing: 4) {
-                  Text(remainingHeld)
-                    .foregroundColor(textPrimaryColor)
-                    .font(.footnote)
-                    .bold()
-                  if(isRTL) {
-                    Text("\(currency.rawValue) \(amount/Double(splitPeriod!) * (Double(splitPeriod!) - 1), specifier: "%.2f")")
-                      .foregroundColor(textPrimaryColor)
-                      .font(.subheadline)
-                  } else {
-                    Text("\(amount/Double(splitPeriod!) * (Double(splitPeriod!) - 1), specifier: "%.2f") \(currency.rawValue)")
-                      .foregroundColor(textPrimaryColor)
-                      .font(.subheadline)
+                  HStack(spacing: 4) {
+                    Text(learnMoreText)
+                      .foregroundColor(iris300Color)
+                      .font(.footnote)
+                      .bold()
+                      .underline()
                   }
                 }
+                
               }
-              
-              HStack(spacing: 4) {
-                Text(learnMore)
-                  .foregroundColor(iris300Color)
-                  .font(.footnote)
-                  .bold()
-                  .underline()
-              }
+              .frame(minWidth: 0,
+                     maxWidth: .infinity,
+                     minHeight: 0,
+                     alignment: .leading)
             }
-            
           }
-          .frame(minWidth: 0,
-                 maxWidth: .infinity,
-                 minHeight: 0,
-                 alignment: .leading)
+          .background(Color(.white))
+          .padding(.horizontal, 16)
+          .onTapGesture {
+              analyticsService.send(event: .LearnMore.clicked(currency: currency, installmentsCount: splitPeriod))
+              toggleOpen()
+          }
         }
-      }
-      .background(Color(.white))
-      .padding(.horizontal, 16)
-      .onTapGesture {
-        toggleOpen()
-      }
+        .sheet(isPresented: $isOpened, onDismiss: {
+            analyticsService.send(event: .LearnMore.popUpClosed(currency: currency, installmentsCount: splitPeriod))
+        }, content: {
+          SafariView(lang: pageLang, customUrl: pageURL)
+            .onAppear(perform: {
+                analyticsService.send(event: .LearnMore.popUpOpened(currency: currency, installmentsCount: splitPeriod))
+            })
+        })
+        .onAppear(perform: {
+            analyticsService.send(event: .SnippedCard.rendered(currency: currency, installmentsCount: splitPeriod))
+        })
     }
-    .sheet(isPresented: $isOpened, content: {
-      SafariView(lang: isRTL ? Lang.ar : Lang.en, customUrl: isRTL ? self.urls.1 : self.urls.0)
-    })
-  }
 }
 
 @available(iOS 13.0, macOS 11, *)
@@ -130,17 +162,21 @@ struct TabbySplititCheckoutSnippetPreview: PreviewProvider {
     VStack {
       Group {
         Text("SplitPeriod :: default (4)")
-        TabbySplititCheckoutSnippet(amount: 1990, currency: .AED)
+          TabbySplititCheckoutSnippet(amount: 1990, currency: .AED)
+              .border(.black)
         TabbySplititCheckoutSnippet(amount: 1990, currency: .AED, preferCurrencyInArabic: true)
+              .border(.black)
       }
       Group {
         Text("SplitPeriod :: default (6)")
         TabbySplititCheckoutSnippet(amount: 1990, currency: .AED, splitPeriod: .of6)
+              .border(.black)
         TabbySplititCheckoutSnippet(
           amount: 1990,
           currency: .AED,
           splitPeriod: .of6,
           preferCurrencyInArabic: true)
+        .border(.black)
       }
     }
   }

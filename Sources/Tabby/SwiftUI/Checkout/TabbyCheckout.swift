@@ -12,6 +12,8 @@ public final class TabbySDK {
     
     public static var shared = TabbySDK()
     
+    private let analyticsService = AnalyticsService.shared
+    
     fileprivate var apiKey: String = ""
     fileprivate var env: Env = .prod
     fileprivate var session: CheckoutSession?
@@ -19,6 +21,11 @@ public final class TabbySDK {
     public func setup(withApiKey apiKey: String, forEnv env: Env = .prod) {
         self.apiKey = apiKey
         self.env = env
+                
+        self.analyticsService.baseURL = Constants.analyticsBaseURL(for: env)
+        self.analyticsService.setContextItem(
+            .tabbySDK(apiKey: apiKey)
+        )
     }
     
     public func configure(forPayment payload: TabbyCheckoutPayload) async throws -> SessionCompletion {
