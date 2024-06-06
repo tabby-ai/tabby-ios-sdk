@@ -17,7 +17,13 @@ final class Api {
         self.networkService = networkService
     }
     
-    func createSession(payload: TabbyCheckoutPayload, apiKey: String, env: Env, completed: @escaping (Result<CheckoutSession, CheckoutError>) -> Void) {        
+    /// Creates a checkout session.
+    ///
+    /// - Warning: It is highly recommended to send a non-empty order history.
+    func createSession(payload: TabbyCheckoutPayload, apiKey: String, env: Env, completed: @escaping (Result<CheckoutSession, CheckoutError>) -> Void) {
+        if payload.payment.order_history.isEmpty {
+            runtimeWarn("It is highly recommended to send a non-empty order history.")
+        }
         networkService.performRequest(
             url: Constants.checkoutBaseURL(for: env),
             method: "POST",
