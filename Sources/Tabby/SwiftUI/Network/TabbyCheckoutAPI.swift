@@ -19,11 +19,8 @@ final class Api {
     
     /// Creates a checkout session.
     ///
-    /// - Warning: It is highly recommended to send a non-empty order history.
+    /// - Note: It is highly recommended to send a non-empty order history if a customer had some orders.
     func createSession(payload: TabbyCheckoutPayload, apiKey: String, env: Env, completed: @escaping (Result<CheckoutSession, CheckoutError>) -> Void) {
-        if payload.payment.order_history.isEmpty {
-            runtimeWarn("It is highly recommended to send a non-empty order history.")
-        }
         networkService.performRequest(
             url: Constants.checkoutBaseURL(for: env),
             method: "POST",
