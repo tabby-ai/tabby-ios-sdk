@@ -185,7 +185,7 @@ public struct Payment: Codable {
     /// ```
     /// Payment(
     ///     amount: "10.00",
-    ///     currency: .usd,
+    ///     currency: .aed,
     ///     description: "Order payment",
     ///     buyer: buyer,
     ///     buyer_history: buyerHistory,
