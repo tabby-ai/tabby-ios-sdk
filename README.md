@@ -51,7 +51,10 @@ let customerPayment = Payment(
         name: "Yazan Khalid",
         dob: nil
     ),
-    buyer_history: BuyerHistory(registered_since: "2019-08-24T14:15:22Z", loyalty_level: 0),
+    buyer_history: BuyerHistory
+        registered_since: "2019-08-24T14:15:22Z",
+        loyalty_level: 0
+    ),
     order: Order(
         reference_id: "#xxxx-xxxxxx-xxxx",
         items: [
@@ -67,7 +70,19 @@ let customerPayment = Payment(
         shipping_amount: "50",
         tax_amount: "100"
     ),
-    order_history: [],
+    order_history: [
+        // Send a non-empty order history array when possible
+        OrderHistory(
+            purchased_at: "2019-08-24T14:15:22Z",
+            amount: "10",
+            status: .new,
+            shipping_address: ShippingAddress(
+                address: "Sample Address #2",
+                city: "Dubai",
+                zip: "01234"
+            )
+        )
+    ],
     shipping_address: ShippingAddress(
         address: "Sample Address #2",
         city: "Dubai",

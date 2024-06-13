@@ -172,10 +172,28 @@ public struct Payment: Codable {
     /// Initialize Payment with Codable meta type
     /// - Parameters:
     ///   - amount: Total payment amount, including tax, shipping and any discounts. Allows to send up to 2 decimals for AED, SAR, QAR; up to 3 decimals for KWD and BHD.
+    ///   - currency: The currency of the payment.
+    ///   - description: An optional description of the payment.
+    ///   - buyer: The buyer information.
+    ///   - buyer_history: The history of the buyer.
+    ///   - order: The order details.
+    ///   - order_history: The history of the order. It is highly recommended to send a non-empty order history when creating a session.
     ///   - meta: Key-value pair of any data that you want to attach to the payment. Can be used to store order ID, customer ID, etc.
+    ///   - shipping_address: The shipping address for the payment.
+    ///
     /// - Example:
     /// ```
-    /// Payment(amount: "10.00", ..., meta: ["orderId": "123456"])
+    /// Payment(
+    ///     amount: "10.00",
+    ///     currency: .aed,
+    ///     description: "Order payment",
+    ///     buyer: buyer,
+    ///     buyer_history: buyerHistory,
+    ///     order: order,
+    ///     order_history: orderHistory,
+    ///     meta: ["orderId": "123456"],
+    ///     shipping_address: shippingAddress
+    /// )
     /// ```
     public init(
         amount: String,

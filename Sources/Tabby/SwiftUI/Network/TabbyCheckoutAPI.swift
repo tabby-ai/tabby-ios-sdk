@@ -17,7 +17,10 @@ final class Api {
         self.networkService = networkService
     }
     
-    func createSession(payload: TabbyCheckoutPayload, apiKey: String, env: Env, completed: @escaping (Result<CheckoutSession, CheckoutError>) -> Void) {        
+    /// Creates a checkout session.
+    ///
+    /// - Note: It is highly recommended to send a non-empty order history if a customer had some orders.
+    func createSession(payload: TabbyCheckoutPayload, apiKey: String, env: Env, completed: @escaping (Result<CheckoutSession, CheckoutError>) -> Void) {
         networkService.performRequest(
             url: Constants.checkoutBaseURL(for: env),
             method: "POST",
