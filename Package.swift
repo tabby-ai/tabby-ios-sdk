@@ -30,5 +30,9 @@ let package = Package(
                 .process("Resources")
             ]
         ),
+        .testTarget(
+            name: "TabbyTests",
+            dependencies: ["Tabby"]
+        )
     ]
 )
