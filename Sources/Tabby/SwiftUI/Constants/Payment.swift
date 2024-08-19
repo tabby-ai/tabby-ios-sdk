@@ -52,6 +52,17 @@ public struct OrderItem: Codable {
     self.unit_price = unit_price
     self.category = category
   }
+    
+    public init(from decoder: any Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        self.description = try container.decodeIfPresent(String.self, forKey: .description)
+        self.product_url = try container.decodeIfPresent(String.self, forKey: .product_url)
+        self.quantity = try container.decode(Int.self, forKey: .quantity)
+        self.reference_id = try container.decode(String.self, forKey: .reference_id)
+        self.title = try container.decode(String.self, forKey: .title)
+        self.unit_price = try container.decode(Amount.self, forKey: .unit_price).description
+        self.category = try container.decode(String.self, forKey: .category)
+    }
 }
 
 public struct Order: Codable {
@@ -74,6 +85,15 @@ public struct Order: Codable {
     self.tax_amount = tax_amount
     self.discount_amount = discount_amount
   }
+    
+    public init(from decoder: any Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        self.reference_id = try container.decode(String.self, forKey: .reference_id)
+        self.items = try container.decode([OrderItem].self, forKey: .items)
+        self.shipping_amount = try container.decodeIfPresent(Amount.self, forKey: .shipping_amount)?.description
+        self.tax_amount = try container.decodeIfPresent(Amount.self, forKey: .tax_amount)?.description
+        self.discount_amount = try container.decodeIfPresent(Amount.self, forKey: .discount_amount)?.description
+    }
 }
 
 public enum OrderItemPaymentMethod: String, Codable {
@@ -94,7 +114,7 @@ public enum OrderItemStatus: String, Codable {
 public struct OrderHistory: Codable {
   public let purchased_at: String // "2019-08-24T14:15:22Z"
   public let amount: String // "10.00"
-  public let payment_method: OrderItemPaymentMethod?
+  @SafeEnum public var payment_method: OrderItemPaymentMethod?
   public let status: OrderItemStatus
   public let buyer: Buyer?
   public let items: [OrderItem]?
@@ -117,6 +137,17 @@ public struct OrderHistory: Codable {
     self.items = items
     self.shipping_address = shipping_address
   }
+    
+    public init(from decoder: any Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        self.purchased_at = try container.decode(String.self, forKey: .purchased_at)
+        self.amount = try container.decode(Amount.self, forKey: .amount).description
+        self._payment_method = try container.decode(SafeEnum<OrderItemPaymentMethod>.self, forKey: .payment_method)
+        self.status = try container.decode(OrderItemStatus.self, forKey: .status)
+        self.buyer = try container.decodeIfPresent(Buyer.self, forKey: .buyer)
+        self.items = try container.decodeIfPresent([OrderItem].self, forKey: .items)
+        self.shipping_address = try container.decodeIfPresent(ShippingAddress.self, forKey: .shipping_address)
+    }
 }
 
 public struct ShippingAddress: Codable {
@@ -261,14 +292,14 @@ public struct Payment: Codable {
     public init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         
-        amount = try container.decode(String.self, forKey: .amount)
+        amount = try container.decode(Amount.self, forKey: .amount).description
         currency = try container.decode(Currency.self, forKey: .currency)
-        description = try container.decode(String.self, forKey: .description)
+        description = try container.decodeIfPresent(String.self, forKey: .description)
         buyer = try container.decode(Buyer.self, forKey: .buyer)
         buyer_history = try container.decode(BuyerHistory.self, forKey: .buyer_history)
         order = try container.decode(Order.self, forKey: .order)
-        order_history = try container.decode([OrderHistory].self, forKey: .order_history)
-        meta = try container.decode(AnyCodable.self, forKey: .meta).value as? [String: Any]
+        order_history = try container.decodeIfPresent([OrderHistory].self, forKey: .order_history) ?? []
+        meta = try container.decodeIfPresent(AnyCodable.self, forKey: .meta)?.value as? [String: Any]
         shipping_address = try container.decode(ShippingAddress.self, forKey: .shipping_address)
     }
     
