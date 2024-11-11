@@ -29,7 +29,7 @@ public struct TabbyProductPageSnippet: View {
     }
     
     private var pageURL: String {
-        let baseURL = isRTL ? WebViewBaseURL.Tabby.ar : WebViewBaseURL.Tabby.en
+        let baseURL = isRTL ? BaseURL.WebView.Tabby.ar : BaseURL.WebView.Tabby.en
         return "\(baseURL)?price=\(amount)&currency=\(currency.rawValue)&source=sdk"
     }
     

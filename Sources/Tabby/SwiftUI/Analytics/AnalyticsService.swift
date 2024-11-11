@@ -8,7 +8,7 @@ final public class AnalyticsService {
     
     // MARK: - Public
     
-    internal var baseURL: String = Constants.analyticsBaseURL(for: .prod)
+    internal var baseURL: String = BaseURL.analyticsURL
     
     // MARK: - Private
     

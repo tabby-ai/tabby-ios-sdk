@@ -30,7 +30,7 @@ public struct TabbySplititCheckoutSnippet: View {
             return overwritenURL
         }
         
-        let baseURL = isRTL ? WebViewBaseURL.Splitit.ar : WebViewBaseURL.Splitit.en
+        let baseURL = isRTL ? BaseURL.WebView.Splitit.ar : BaseURL.WebView.Splitit.en
         return "\(baseURL)?price=\(amount)&currency=\(currency.rawValue)&splitPeriod=\(splitPeriod)"
     }
     

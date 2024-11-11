@@ -56,7 +56,10 @@ extension AnalyticsContextItem {
     
     static func tabbySDK(apiKey: String) -> AnalyticsContextItem {
         Self(key: .tabbySDK) {
-            ["publicKey": apiKey]
+            [
+                "publicKey": apiKey,
+                "version": version
+            ]
         }
     }
 }

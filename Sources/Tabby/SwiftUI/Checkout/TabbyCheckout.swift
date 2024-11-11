@@ -2,7 +2,6 @@
 //  TabbyCheckout.swift
 //  Tabby
 //
-//  Created by ilya.kuznetsov on 26.08.2021.
 //
 
 import SwiftUI
@@ -16,21 +15,19 @@ public final class TabbySDK {
     private let analyticsService = AnalyticsService.shared
     
     fileprivate var apiKey: String = ""
-    fileprivate var env: Env = .prod
     fileprivate var session: CheckoutSession?
     
-    public func setup(withApiKey apiKey: String, forEnv env: Env = .prod) {
+    public func setup(withApiKey apiKey: String) {
         self.apiKey = apiKey
-        self.env = env
                 
-        self.analyticsService.baseURL = Constants.analyticsBaseURL(for: env)
+        self.analyticsService.baseURL = BaseURL.analyticsURL
         self.analyticsService.setContextItem(
             .tabbySDK(apiKey: apiKey)
         )
     }
     
     public func configure(forPayment payload: TabbyCheckoutPayload, completion: @escaping (SessionCompletion) -> ()) {
-        Api.shared.createSession(payload: payload, apiKey: TabbySDK.shared.apiKey, env: self.env, completed: { result in
+        Api.shared.createSession(payload: payload, apiKey: TabbySDK.shared.apiKey, completed: { result in
             DispatchQueue.main.async {
                 switch result {
                 case .success(let s):

@@ -2,7 +2,6 @@
 //  NetworkManager.swift
 //  Tabby
 //
-//  Created by ilya.kuznetsov on 26.08.2021.
 //
 
 import Foundation
@@ -20,9 +19,9 @@ final class Api {
     /// Creates a checkout session.
     ///
     /// - Note: It is highly recommended to send a non-empty order history if a customer had some orders.
-    func createSession(payload: TabbyCheckoutPayload, apiKey: String, env: Env, completed: @escaping (Result<CheckoutSession, CheckoutError>) -> Void) {
+    func createSession(payload: TabbyCheckoutPayload, apiKey: String, completed: @escaping (Result<CheckoutSession, CheckoutError>) -> Void) {
         networkService.performRequest(
-            url: Constants.checkoutBaseURL(for: env),
+            url: BaseURL.checkout,
             method: "POST",
             headers: [
                 "Content-Type": "application/json",
