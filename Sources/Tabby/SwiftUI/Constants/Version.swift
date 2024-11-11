@@ -1,3 +1,3 @@
 import Foundation
 
-let version = "1.7.4"
+let version = "1.7.7"
