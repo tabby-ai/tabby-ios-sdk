@@ -47,14 +47,27 @@ struct ImageView: View {
     }
     
     var body: some View {
-        
-        Image(uiImage: image)
-            .resizable()
-            .onReceive(imageLoader.didChange) { data in
-                self.image = UIImage(data: data) ?? UIImage()
-                loaded = true
+        Group {
+            if loaded {
+                Image(uiImage: image)
+                    .resizable()
+            } else {
+                Image(systemName: "exclamationmark.triangle.fill")
+                    .resizable()
+                    .scaledToFit()
+                    .foregroundColor(.red)
             }
+        }
+        .onReceive(imageLoader.didChange) { data in
+            if let loadedImage = UIImage(data: data) {
+                self.image = loadedImage
+                self.loaded = true
+            } else {
+                self.loaded = false
+            }
+        }
     }
+
 }
 
 @available(iOS 14.0, *)
