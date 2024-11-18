@@ -72,8 +72,8 @@ public struct TabbyCheckout: View {
         if let s = checkout.session {
             for type in s.configuration.availableProducts.keys {
                 switch type {
-                case "installments":
-                    guard let products = s.configuration.availableProducts["installments"] else {
+                case TabbyProductType.installments.rawValue:
+                    guard let products = s.configuration.availableProducts[type] else {
                         checkout.installmentsURL = ""
                         break
                     }
@@ -87,8 +87,8 @@ public struct TabbyCheckout: View {
                     }
                     checkout.installmentsURL = webUrl
                     
-                case "credit_card_installments":
-                    guard let products = s.configuration.availableProducts["credit_card_installments"] else {
+                case TabbyProductType.credit_card_installments.rawValue:
+                    guard let products = s.configuration.availableProducts[type] else {
                         checkout.creditCardInstallmentsURL = ""
                         break
                         
