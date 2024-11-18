@@ -17,9 +17,14 @@ struct SafariView: UIViewControllerRepresentable {
     
     init(lang: Lang, customUrl: String? = nil) {
         self.lang = lang
-        self.link = lang == Lang.en ? BaseURL.WebView.Tabby.en : BaseURL.WebView.Tabby.ar
-        let finalUrl = customUrl ?? (lang == Lang.en ? BaseURL.WebView.Tabby.en : BaseURL.WebView.Tabby.ar)
-        self.url = URL(string: finalUrl)
+        switch lang {
+        case .en:
+            self.link = BaseURL.WebView.Tabby.en
+            self.url = URL(string: customUrl ?? BaseURL.WebView.Tabby.en)
+        case .ar:
+            self.link = BaseURL.WebView.Tabby.ar
+            self.url =  URL(string: customUrl ?? BaseURL.WebView.Tabby.ar)
+        }
         self.customUrl = customUrl
     }
     
