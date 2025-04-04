@@ -45,7 +45,12 @@ public struct TabbyProductPageSnippet: View {
     
     public var body: some View {
         let textNode1 = String(format: "snippetTitle1".localized)
-        let textNode2 = String(format: "snippetAmount".localized, "\((amount/Double(installmentsCount)).withFormattedAmount)", "\(currency.localized(l: withCurrencyInArabic && isRTL ? .ar : nil))")
+        
+        let textNode2 = String(format: "snippetAmount".localized, String.moneyString(
+            from: amount / Double(installmentsCount),
+            currency: currency,
+            locale: withCurrencyInArabic || isRTL ? .ar : .en
+        ))
         let textNode3 =  String(format: "snippetTitle2".localized)
         
         let learnMoreText = String(format: "learnMore".localized)

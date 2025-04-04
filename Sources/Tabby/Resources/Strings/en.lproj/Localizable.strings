@@ -1,6 +1,6 @@
 "snippetTitle1" = "or 4 interest-free payments of ";
-"snippetAmount" = "%@ %@ ";
-"snippetAmountEG" = "%@ %@. ";
+"snippetAmount" = "%@ ";
+"snippetAmountEG" = "%@ ";
 "snippetTitle2" = "";
 "learnMore" = "Learn more";
 "useAnyCard" = "Use any card.";
@@ -9,6 +9,6 @@
 "in2Months" = "In 2 months";
 "in3Months" = "In 3 months";
 "noFeesCreditCard" = "No fees. Pay with any credit card.";
-"snippetTitleCreditCard" = "or 4 interest-free credit card payments of %@ %@ ";
+"snippetTitleCreditCard" = "or 4 interest-free credit card payments of %@ ";
 "chargedToday" = "Charged today";
 "remainingHeld" = "Remaining held on card";

@@ -91,15 +91,14 @@ public struct TabbySplititCheckoutSnippet: View {
                         .foregroundColor(textPrimaryColor)
                         .font(.footnote)
                         .bold()
-                      if(isRTL) {
-                        Text("\(currency.rawValue) \(amount/Double(splitPeriod), specifier: "%.2f")")
-                          .foregroundColor(textPrimaryColor)
-                          .font(.subheadline)
-                      } else {
-                        Text("\(amount/(Double(splitPeriod)), specifier: "%.2f") \(currency.rawValue)")
-                          .foregroundColor(textPrimaryColor)
-                          .font(.subheadline)
-                      }
+                        
+                        Text(String.moneyString(
+                            from: amount/Double(splitPeriod),
+                            currency: currency,
+                            locale: withCurrencyInArabic || isRTL ? .ar : .en
+                        ))
+                        .foregroundColor(textPrimaryColor)
+                        .tabbyStyle(.interBody)
                       
                     }
                     VStack(alignment: .leading, spacing: 4) {
@@ -107,15 +106,14 @@ public struct TabbySplititCheckoutSnippet: View {
                         .foregroundColor(textPrimaryColor)
                         .font(.footnote)
                         .bold()
-                      if(isRTL) {
-                        Text("\(currency.rawValue) \(amount/Double(splitPeriod) * (Double(splitPeriod) - 1), specifier: "%.2f")")
-                          .foregroundColor(textPrimaryColor)
-                          .font(.subheadline)
-                      } else {
-                        Text("\(amount/Double(splitPeriod) * (Double(splitPeriod) - 1), specifier: "%.2f") \(currency.rawValue)")
-                          .foregroundColor(textPrimaryColor)
-                          .font(.subheadline)
-                      }
+                    
+                      Text(String.moneyString(
+                            from: amount/Double(splitPeriod) * (Double(splitPeriod) - 1),
+                            currency: currency,
+                            locale: withCurrencyInArabic || isRTL ? .ar : .en
+                        ))
+                        .foregroundColor(textPrimaryColor)
+                        .tabbyStyle(.interBody)
                     }
                   }
                   

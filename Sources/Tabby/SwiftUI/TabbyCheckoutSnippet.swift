@@ -60,9 +60,11 @@ public struct TabbyCheckoutSnippet: View {
         segment: Segment,
         dividerVisibility: DividerVisibility = .full
     ) -> some View {
-        let chunkAmountText = !isRTL
-        ? Text("\(chunkAmount/4, specifier: "%.2f") \(currency.rawValue)")
-        : Text("\(currency.localized(l: withCurrencyInArabic && isRTL ? .ar : nil)) \(chunkAmount/4, specifier: "%.2f") ")
+        let chunkAmountText = Text(String.moneyString(
+            from: chunkAmount / 4,
+            currency: currency,
+            locale: withCurrencyInArabic || isRTL ? .ar : .en
+        ))
         
         return VStack(alignment: .center, spacing: 6) {
             HStack(spacing: 1) {

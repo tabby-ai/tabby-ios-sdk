@@ -64,7 +64,11 @@ public struct TabbyCreditCardInstallmentsSnippet: View {
     }
     
     private var titleText: String {
-        String(format: "snippetTitleCreditCard".localized, "\((amount/Double(splitPeriod)).withFormattedAmount)", "\(currency.localized(l: withCurrencyInArabic ? .ar : nil))")
+        String(format: "snippetTitleCreditCard".localized, String.moneyString(
+            from: (amount/Double(splitPeriod)),
+            currency: currency,
+            locale: withCurrencyInArabic && isRTL ? .ar : .en
+        ))
     }
 
     // MARK: - BODY
@@ -76,7 +80,7 @@ public struct TabbyCreditCardInstallmentsSnippet: View {
                 VStack(alignment: .leading, spacing: 4) {
                   Text(titleText)
                     .foregroundColor(textPrimaryColor)
-                    .font(.system(size: 12))
+                    .tabbyStyle(.interBody)
                   + Text(learnMoreText)
                     .foregroundColor(iris300Color)
                     .font(.system(size: 12, weight: .bold))

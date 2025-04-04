@@ -15,8 +15,7 @@ internal struct Typography: Hashable {
         [
             ("Inter-Bold", "ttf"),
             ("Inter-Regular", "ttf"),
-            ("Radial-Bold", "otf"),
-            ("Radial-Regular", "ttf"),
+            ("RadialSaudiGX", "ttf"),
             ("IBMPlexSansArabic-Regular", "ttf"),
             ("IBMPlexSansArabic-Bold", "ttf")
         ].forEach { name, ext in
@@ -29,18 +28,7 @@ internal struct Typography: Hashable {
             print("Could not find font file for: \(name).\(ext)")
             return
         }
-        guard let fontDataProvider = CGDataProvider(url: url as CFURL) else {
-            print("Could not create font data provider for \(url).")
-            return
-        }
-        guard let font = CGFont(fontDataProvider) else {
-            print("could not create font")
-            return
-        }
-        var error: Unmanaged<CFError>?
-        if !CTFontManagerRegisterGraphicsFont(font, &error) {
-            print(error!.takeUnretainedValue())
-        }
+        CTFontManagerRegisterFontsForURL(url as CFURL, .process, nil)
     }
     
     /// Actual font applied to the label.

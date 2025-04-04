@@ -1,6 +1,6 @@
 "snippetTitle1" = "أو قسّمها على 4 دفعات شهرية بقيمة ";
-"snippetAmount" = "%@ %@ ";
-"snippetAmountEG" = "%@ %@ ";
+"snippetAmount" = "%@ ";
+"snippetAmountEG" = "%@ ";
 "snippetTitle2" = "بدون رسوم أو فوائد.";
 "learnMore" = "لمعرفة المزيد";
 "useAnyCard" = "استخدم أي بطاقة.";
@@ -9,6 +9,6 @@
 "in2Months" = "بعد شهرين";
 "in3Months" = "بعد ثلاثة أشهر";
 "noFeesCreditCard" = "بدون رسوم. إدفع بأي بطاقة ائتمانية.";
-"snippetTitleCreditCard" = "أو قسّمها على 4 دفعات بالبطاقة الائتمانية بقيمة %@ %@، بدون فوائد. ";
+"snippetTitleCreditCard" = "أو قسّمها على 4 دفعات بالبطاقة الائتمانية بقيمة %@، بدون فوائد. ";
 "chargedToday" = "دُفع اليوم";
 "remainingHeld" = "المبلغ المحتجز في البطاقة";

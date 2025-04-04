@@ -17,9 +17,19 @@ public enum Currency: String, Codable {
         }
     }
     
+    public var symbol: String {
+        switch self {
+        case .AED: return "AED"
+        case .SAR: return "\u{20cf}"
+        case .KWD: return "KWD"
+        case .BHD: return "BHF"
+        case .QAR: return "QAR"
+        }
+    }
+    
     public func localized(l: Lang?) -> String {
         if (l == nil || l == .en) {
-          return self.rawValue
+            return self.symbol
         }
         switch self {
         case .AED:
