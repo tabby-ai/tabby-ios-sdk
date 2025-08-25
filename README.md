@@ -243,7 +243,7 @@ struct CheckoutExampleWithTabby: View {
 
 This is required to enable Arabic locale in your snippets.
 
-### TabbyPresentationSnippet
+### TabbySnippetView
 
 ```swift
 import UIKit
@@ -255,7 +255,7 @@ class ViewController: UIViewController {
         super.viewDidLoad()
         if #available(iOS 14.0, *) {
             let vc = UIHostingController(
-                rootView: Tabby.TabbyProductPageSnippet(amount: 1990, currency: .SAR)
+                rootView: Tabby.TabbySnippetView(amount: 1990, currency: .SAR)
             )
             addChild(vc)
             vc.view.frame = view.frame
@@ -272,35 +272,3 @@ class ViewController: UIViewController {
 
 ## Result
 
-![Snippet EN](./docs/TabbyPresentationSnippet_EN.gif)
-![Snippet AR](./docs/TabbyPresentationSnippet_AR.gif)
-
-### TabbyCheckoutSnippet
-
-```swift
-import UIKit
-import SwiftUI
-import Tabby
-
-class ViewController: UIViewController {
-    override func viewDidLoad() {
-        super.viewDidLoad()
-        if #available(iOS 14.0, *) {
-            let vc = UIHostingController(
-                rootView: Tabby.TabbyCheckoutSnippet(amount: 2000, currency: .AED)
-            )
-            addChild(vc)
-            vc.view.frame = view.frame
-            view.addSubview(vc.view)
-            vc.didMove(toParent: self)
-        } else {
-            // Fallback on earlier versions
-        }
-    }
-}
-```
-
-## Result
-
-![Snippet EN](./docs/TabbyCheckoutSnippet_EN.png)
-![Snippet AR](./docs/TabbyCheckoutSnippet_AR.png)

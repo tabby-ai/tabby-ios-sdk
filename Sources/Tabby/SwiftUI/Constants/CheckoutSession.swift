@@ -11,17 +11,37 @@ struct CheckoutSession: Codable {
     var id: String
     var configuration: Configuration
     var payment: CheckoutPayment
+    var status: String
 }
+
+public enum RejectionReason: String, Codable {
+    case notAvailable = "not_available"
+    case orderAmountTooHigh = "order_amount_too_high"
+    case orderAmountTooLow = "order_amount_too_low"
+}
+
 
 struct CheckoutPayment: Codable {
     var id: String
 }
 
 struct Configuration: Codable {
+    
+    struct Products: Codable {
+        
+        struct Installments: Codable {
+            var rejection_reason: RejectionReason?
+        }
+        
+        var installments: Installments
+    }
+
     var availableProducts: [String: [Product]]
+    var products: Products
     
     enum CodingKeys: String, CodingKey {
         case availableProducts = "available_products"
+        case products
     }
 }
 
@@ -43,10 +63,9 @@ public enum TabbyResult: String {
 
 public enum TabbyProductType: String, Codable, CaseIterable {
     case installments = "installments"
-    case credit_card_installments = "credit_card_installments"
 }
 
-public struct TabbyCheckoutPayload: Codable {
+public struct TabbyCheckoutPayload: Encodable {
     public let merchant_code: String
     public let lang: Lang
     public let payment: Payment
