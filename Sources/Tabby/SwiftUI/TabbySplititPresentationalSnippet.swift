@@ -7,6 +7,7 @@
 
 import SwiftUI
 
+@available(*, deprecated, renamed: "TabbySnippetView", message: "Use TabbySnippetView instead")
 @available(iOS 14.0, macOS 11, *)
 public struct TabbyCreditCardInstallmentsSnippet: View {
     @Environment(\.layoutDirection) var direction

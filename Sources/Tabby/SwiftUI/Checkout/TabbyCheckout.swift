@@ -8,13 +8,20 @@ import SwiftUI
 
 public final class TabbySDK {
     
-    public typealias SessionCompletion = Result<(sessionId: String, paymentId: String, tabbyProductTypes: [TabbyProductType]), CheckoutError>
+    public struct SessionCompletionPayload {
+        public var sessionId: String
+        public var paymentId: String
+        public var tabbyProductTypes: [TabbyProductType]
+        public var rejectionReason: RejectionReason?
+    }
+    
+    public typealias SessionCompletion = Result<SessionCompletionPayload, CheckoutError>
     
     public static var shared = TabbySDK()
     
     private let analyticsService = AnalyticsService.shared
     
-    fileprivate var apiKey: String = ""
+    private(set) var apiKey: String = ""
     fileprivate var session: CheckoutSession?
     
     public func setup(withApiKey apiKey: String) {
@@ -40,10 +47,11 @@ public final class TabbySDK {
                         }
                     }
 
-                    let res: (sessionId: String, paymentId: String, tabbyProductTypes: [TabbyProductType]) = (
+                    let res = SessionCompletionPayload(
                         sessionId: s.id,
                         paymentId: s.payment.id,
-                        tabbyProductTypes: tabbyProductTypes
+                        tabbyProductTypes: tabbyProductTypes,
+                        rejectionReason: s.status == "rejected" ? s.configuration.products.installments.rejection_reason : nil
                     )
                     completion(.success(res))
                     
@@ -86,23 +94,7 @@ public struct TabbyCheckout: View {
                         break
                     }
                     checkout.installmentsURL = webUrl
-                    
-                case "credit_card_installments":
-                    guard let products = s.configuration.availableProducts["credit_card_installments"] else {
-                        checkout.creditCardInstallmentsURL = ""
-                        break
-                        
-                    }
-                    guard let product = products.first else {
-                        checkout.creditCardInstallmentsURL = ""
-                        break
-                    }
-                    guard let webUrl = product.webUrl as String? else {
-                        checkout.creditCardInstallmentsURL = ""
-                        break
-                    }
-                    checkout.creditCardInstallmentsURL = webUrl
-                    
+
                 default:
                     break
                 }
@@ -118,14 +110,7 @@ public struct TabbyCheckout: View {
                     url: self.checkout.installmentsURL,
                     vc: self.checkout
                 )
-            }  else if (productType == .credit_card_installments) {
-                CheckoutWebView(
-                    productType: .credit_card_installments,
-                    url: self.checkout.creditCardInstallmentsURL,
-                    vc: self.checkout
-                )
-            }
-            else {
+            } else {
                 ActivityIndicator(style: .medium)
             }
         }
