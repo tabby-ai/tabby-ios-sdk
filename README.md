@@ -272,3 +272,7 @@ class ViewController: UIViewController {
 
 ## Result
 
+Example of WebWidget
+<!-- ![English](./docs/TabbyCheckoutSnippet_EN.png) -->
+
+<!-- ![Arabic](./docs/TabbyCheckoutSnippet_AR.png) -->
