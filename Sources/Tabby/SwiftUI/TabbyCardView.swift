@@ -2,6 +2,26 @@ import SwiftUI
 
 // MARK: - Tabby Card (Checkout Snippet)
 
+/// Checkout page snippet displaying payment information.
+///
+/// Shows payment details under the Tabby payment method option on checkout pages.
+/// Includes a "Learn More" link that opens a modal explaining Tabby's payment options.
+///
+/// Display this snippet when the Tabby payment method is selected during checkout.
+///
+/// Example:
+/// ```swift
+/// TabbyCardView(
+///     amount: 1600.00,
+///     currency: .SAR,
+///     lang: .en,
+///     shouldInheritBg: false,
+///     merchantCode: "SA"
+/// )
+/// .frame(height: 120)
+/// ```
+///
+/// - Note: Replaces the deprecated `TabbyCheckoutSnippet` with web-based implementation.
 @available(iOS 14.0, macOS 11.0, *)
 public struct TabbyCardView: View {
 
@@ -12,6 +32,15 @@ public struct TabbyCardView: View {
     private let merchantCode: String
 
     // MARK: Init
+
+    /// Creates a checkout snippet for the checkout page.
+    ///
+    /// - Parameters:
+    ///   - amount: Order total amount
+    ///   - currency: Currency code (`.AED`, `.SAR`, `.KWD`, etc.)
+    ///   - lang: Display language (default: `.en`)
+    ///   - shouldInheritBg: Inherit background color from parent view (default: `false`)
+    ///   - merchantCode: Merchant code for your currency (e.g., "SA" for SAR, "AE" for AED, "KW" for KWD)
     public init(
         amount: Double,
         currency: Currency,

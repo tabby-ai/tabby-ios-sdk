@@ -3,6 +3,16 @@ import WebKit
 
 // MARK: - Tabby Web Widget View (Reusable Component)
 
+/// Reusable web widget component that wraps WKWebView for Tabby promotional snippets.
+///
+/// This component handles:
+/// - Loading web widgets from Tabby's widget service
+/// - Message passing between JavaScript and native code
+/// - Dynamic height adjustment based on widget content
+/// - Full-screen "Learn More" pop-up modal
+/// - RTL layout support for Arabic
+///
+/// - Note: This is an internal component. Use `TabbySnippetView` or `TabbyCardView` instead.
 @available(iOS 14.0, macOS 11.0, *)
 struct TabbyWebWidgetView: View {
 
@@ -16,6 +26,14 @@ struct TabbyWebWidgetView: View {
     @State private var openURLAction: OpenURLAction?
 
     // MARK: Init
+
+    /// Creates a web widget view with the specified configuration.
+    ///
+    /// - Parameters:
+    ///   - widgetURL: Base URL for the web widget (e.g., "https://widgets.tabby.ai/tabby-promo.html")
+    ///   - queryParams: Query parameters to append to the widget URL
+    ///   - lang: Language for the widget content (default: `.en`)
+    ///   - analyticsPrefix: Prefix for analytics events (default: "Snippet")
     init(
         widgetURL: String,
         queryParams: [String: String],
