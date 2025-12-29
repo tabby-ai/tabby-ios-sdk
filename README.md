@@ -275,93 +275,11 @@ class ViewController: UIViewController {
 }
 ```
 
-**SwiftUI Usage:**
-```swift
-import SwiftUI
-import Tabby
+<!-- ![UIKit](./docs/UIKit.png) -->
 
-struct ProductView: View {
-    var body: some View {
-        VStack {
-            // Your product details
-            Text("Product Price: 1990 SAR")
+## Result
 
-            // Add Tabby promo snippet
-            TabbySnippetView(
-                amount: 1990,
-                currency: .SAR,
-                lang: .en,
-                shouldInheritBg: false
-            )
-            .frame(height: 100)
-        }
-    }
-}
-```
+Example of WebWidget
+<!-- ![English](./docs/TabbyCheckoutSnippet_EN.png) -->
 
-### TabbyCardView (Checkout Page)
-
-Use this snippet on the checkout page under the Tabby payment method option. It displays payment information and opens a "Learn More" pop-up when clicked.
-
-**SwiftUI Usage:**
-```swift
-import SwiftUI
-import Tabby
-
-struct CheckoutView: View {
-    @State private var selectedPaymentMethod: PaymentMethod = .creditCard
-
-    var body: some View {
-        VStack {
-            // Payment method selection
-            if selectedPaymentMethod == .tabby {
-                TabbyCardView(
-                    amount: 1600.00,
-                    currency: .SAR,
-                    lang: .en,
-                    shouldInheritBg: false,
-                    merchantCode: "SA"
-                )
-                .frame(height: 120)
-            }
-        }
-    }
-}
-```
-
-**UIKit Usage:**
-```swift
-import UIKit
-import SwiftUI
-import Tabby
-
-class CheckoutViewController: UIViewController {
-    override func viewDidLoad() {
-        super.viewDidLoad()
-        if #available(iOS 14.0, *) {
-            let vc = UIHostingController(
-                rootView: Tabby.TabbyCardView(
-                    amount: 1600.00,
-                    currency: .SAR,
-                    lang: .en,
-                    shouldInheritBg: false,
-                    merchantCode: "SA"
-                )
-            )
-            addChild(vc)
-            vc.view.frame = CGRect(x: 0, y: 0, width: view.frame.width, height: 120)
-            view.addSubview(vc.view)
-            vc.didMove(toParent: self)
-        }
-    }
-}
-```
-
-**Parameters:**
-- `amount`: The order total amount
-- `currency`: Currency code (`.AED`, `.SAR`, `.KWD`, etc.)
-- `lang`: Language (`.en` or `.ar`, default is `.en`)
-- `shouldInheritBg`: Inherit background color from parent (default is `false`)
-- `merchantCode`: Your merchant code based on currency (e.g., "SA" for SAR, "AE" for AED)
-
-**Note:** `TabbyCheckoutSnippet` (native UI component) is deprecated. Use `TabbyCardView` for the web-based checkout snippet with "Learn More" functionality.
+<!-- ![Arabic](./docs/TabbyCheckoutSnippet_AR.png) -->
