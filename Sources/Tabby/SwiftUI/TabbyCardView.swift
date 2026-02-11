@@ -57,19 +57,35 @@ public struct TabbyCardView: View {
 
     // MARK: Body
     public var body: some View {
-        let price = Int(amount)
-        let queryParams: [String: String] = [
-            "price": "\(price)",
-            "currency": currency.rawValue,
-            "lang": lang.rawValue,
-            "publicKey": TabbySDK.shared.apiKey,
-            "merchantCode": merchantCode,
-            "shouldInheritBg": "\(shouldInheritBg)"
-        ]
+        let dir = lang == .ar ? "rtl" : "ltr"
+        let html = """
+        <!DOCTYPE html>
+        <html lang="\(lang.rawValue)" dir="\(dir)">
+        <head>
+            <meta charset="UTF-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+            <style>body { margin: 0; padding: 0; }</style>
+        </head>
+        <body>
+            <div id="tabbyCard"></div>
+            <script src="https://checkout.tabby.ai/tabby-card.js"></script>
+            <script>
+                new TabbyCard({
+                    selector: '#tabbyCard',
+                    currency: '\(currency.rawValue)',
+                    price: \(Int(amount)),
+                    lang: '\(lang.rawValue)',
+                    publicKey: '\(TabbySDK.shared.apiKey)',
+                    merchantCode: '\(merchantCode)',
+                    shouldInheritBg: \(shouldInheritBg)
+                });
+            </script>
+        </body>
+        </html>
+        """
 
         return TabbyWebWidgetView(
-            widgetURL: BaseURL.WebView.Widgets.card,
-            queryParams: queryParams,
+            htmlContent: html,
             lang: lang,
             analyticsPrefix: "Checkout Card"
         )
@@ -80,19 +96,21 @@ public struct TabbyCardView: View {
 @available(iOS 14.0, macOS 11.0, *)
 struct TabbyCardView_Previews: PreviewProvider {
     static var previews: some View {
-        VStack(spacing: 20) {
+        TabbySDK.shared.setup(withApiKey: PreviewSecrets.publicKey)
+
+        return VStack(spacing: 20) {
             TabbyCardView(
-                amount: 1600.00,
+                amount: 1000,
                 currency: .SAR,
                 lang: .en,
-                merchantCode: "SA"
+                merchantCode: "Ramadan"
             )
 
             TabbyCardView(
-                amount: 1200.00,
-                currency: .AED,
+                amount: 1000,
+                currency: .SAR,
                 lang: .ar,
-                merchantCode: "AE"
+                merchantCode: "Ramadan"
             )
             .environment(\.layoutDirection, .rightToLeft)
         }

@@ -1,6 +1,13 @@
 import SwiftUI
 import WebKit
 
+// MARK: - Web View Source
+
+enum WebViewSource {
+    case url(URL)
+    case html(String)
+}
+
 // MARK: - Tabby Web Widget View (Reusable Component)
 
 /// Reusable web widget component that wraps WKWebView for Tabby promotional snippets.
@@ -16,7 +23,7 @@ import WebKit
 @available(iOS 14.0, macOS 11.0, *)
 struct TabbyWebWidgetView: View {
 
-    private let url: URL
+    private let source: WebViewSource
     private let lang: Lang
     private let analyticsPrefix: String
 
@@ -27,13 +34,7 @@ struct TabbyWebWidgetView: View {
 
     // MARK: Init
 
-    /// Creates a web widget view with the specified configuration.
-    ///
-    /// - Parameters:
-    ///   - widgetURL: Base URL for the web widget (e.g., "https://widgets.tabby.ai/tabby-promo.html")
-    ///   - queryParams: Query parameters to append to the widget URL
-    ///   - lang: Language for the widget content (default: `.en`)
-    ///   - analyticsPrefix: Prefix for analytics events (default: "Snippet")
+    /// Creates a web widget view that loads a remote URL with query parameters.
     init(
         widgetURL: String,
         queryParams: [String: String],
@@ -41,7 +42,18 @@ struct TabbyWebWidgetView: View {
         analyticsPrefix: String = "Snippet"
     ) {
         let urlString = "\(widgetURL)?\(queryParams.queryString)"
-        self.url = URL(string: urlString)!
+        self.source = .url(URL(string: urlString)!)
+        self.lang = lang
+        self.analyticsPrefix = analyticsPrefix
+    }
+
+    /// Creates a web widget view that loads local HTML content.
+    init(
+        htmlContent: String,
+        lang: Lang = .en,
+        analyticsPrefix: String = "Snippet"
+    ) {
+        self.source = .html(htmlContent)
         self.lang = lang
         self.analyticsPrefix = analyticsPrefix
     }
@@ -49,7 +61,7 @@ struct TabbyWebWidgetView: View {
     // MARK: Body
     var body: some View {
         TabbyWebView(
-            url: url,
+            source: source,
             initializationData: nil,
             isScrollEnabled: false,
             onLoaded: { isLoaded = true },
@@ -78,7 +90,7 @@ private struct FullScreenWebView: View {
         if let url = URL(string: urlAction.url) {
             ZStack(alignment: lang == .ar ? .topLeading : .topTrailing) {
                 TabbyWebView(
-                    url: url,
+                    source: .url(url),
                     initializationData: urlAction.data,
                     isScrollEnabled: true,
                     onLoaded: {},
@@ -101,7 +113,7 @@ private struct FullScreenWebView: View {
 // MARK: - SwiftUI Wrapper for WKWebView
 
 private struct TabbyWebView: UIViewRepresentable {
-    let url: URL
+    let source: WebViewSource
     let initializationData: String?
     let isScrollEnabled: Bool
     let onLoaded: () -> Void
@@ -132,15 +144,17 @@ private struct TabbyWebView: UIViewRepresentable {
     }
 
     func updateUIView(_ webView: WKWebView, context: Context) {
-        guard webView.url != url else { return }
         context.coordinator.webView = webView
-        load(in: webView)
     }
 
     // MARK: Private helper
     private func load(in webView: WKWebView) {
-        let request = URLRequest(url: url)
-        webView.load(request)
+        switch source {
+        case .url(let url):
+            webView.load(URLRequest(url: url))
+        case .html(let html):
+            webView.loadHTMLString(html, baseURL: nil)
+        }
     }
 
     // MARK: Coordinator
