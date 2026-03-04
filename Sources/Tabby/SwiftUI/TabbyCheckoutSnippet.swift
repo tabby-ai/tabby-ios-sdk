@@ -8,28 +8,29 @@
 import SwiftUI
 
 @available(iOS 14.0, macOS 11, *)
+@available(*, deprecated, message: "Use TabbyCardView instead for web-based checkout snippet with learn more functionality")
 public struct TabbyCheckoutSnippet: View {
     @Environment(\.layoutDirection) var direction
-    
+
     let amount: Double
     let currency: Currency
     let withCurrencyInArabic: Bool
-    
+
     private var isRTL: Bool { direction == .rightToLeft }
-    
+
     private enum DividerVisibility {
         case none
         case leading
         case trailing
         case full
     }
-    
+
     private enum Segment {
         case q25
         case q50
         case q75
         case q100
-        
+
         func circleView(isRTL: Bool) -> some View {
             switch self {
             case .q25:
@@ -47,7 +48,8 @@ public struct TabbyCheckoutSnippet: View {
             }
         }
     }
-    
+
+    @available(*, deprecated, message: "Use TabbyCardView instead for web-based checkout snippet with learn more functionality")
     public init(amount: Double, currency: Currency, preferCurrencyInArabic: Bool? = nil) {
         self.amount = amount
         self.currency = currency
