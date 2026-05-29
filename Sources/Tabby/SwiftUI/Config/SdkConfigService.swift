@@ -20,7 +20,6 @@ import Foundation
 ///   - whether a retry should clear the cached task so a *new* caller triggers re-fetch,
 ///     or whether retries should be bounded inside the first call only (current design
 ///     caches the failed Task, so today's behavior is "no retry ever")
-@available(iOS 13.0, *)
 final actor SdkConfigService {
 
     static let shared = SdkConfigService()
