@@ -34,33 +34,41 @@ public final class TabbySDK {
     }
     
     public func configure(forPayment payload: TabbyCheckoutPayload, completion: @escaping (SessionCompletion) -> ()) {
-        Api.shared.createSession(payload: payload, apiKey: TabbySDK.shared.apiKey, completed: { result in
-            DispatchQueue.main.async {
-                switch result {
-                case .success(let s):
-                    self.session = s
-                    var tabbyProductTypes: [TabbyProductType] = []
-                    
-                    for key in TabbyProductType.allCases {
-                        if s.configuration.availableProducts[key.rawValue] != nil {
-                            tabbyProductTypes.append(key)
-                        }
-                    }
+        Task {
+            let config = await SdkConfigService.shared.config()
+            let endpoints = config.endpoints(for: payload.payment.currency)
+            Api.shared.createSession(
+                payload: payload,
+                apiKey: TabbySDK.shared.apiKey,
+                baseUrl: endpoints.checkoutApiBaseUrl
+            ) { result in
+                DispatchQueue.main.async {
+                    switch result {
+                    case .success(let s):
+                        self.session = s
+                        var tabbyProductTypes: [TabbyProductType] = []
 
-                    let res = SessionCompletionPayload(
-                        sessionId: s.id,
-                        paymentId: s.payment.id,
-                        tabbyProductTypes: tabbyProductTypes,
-                        rejectionReason: s.status == "rejected" ? s.configuration.products.installments.rejection_reason : nil
-                    )
-                    completion(.success(res))
-                    
-                case .failure(let error):
-                    print(error.localizedDescription)
-                    completion(.failure(error))
+                        for key in TabbyProductType.allCases {
+                            if s.configuration.availableProducts[key.rawValue] != nil {
+                                tabbyProductTypes.append(key)
+                            }
+                        }
+
+                        let res = SessionCompletionPayload(
+                            sessionId: s.id,
+                            paymentId: s.payment.id,
+                            tabbyProductTypes: tabbyProductTypes,
+                            rejectionReason: s.status == "rejected" ? s.configuration.products.installments.rejection_reason : nil
+                        )
+                        completion(.success(res))
+
+                    case .failure(let error):
+                        print(error.localizedDescription)
+                        completion(.failure(error))
+                    }
                 }
             }
-        })
+        }
     }
 }
 
