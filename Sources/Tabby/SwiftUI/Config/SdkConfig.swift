@@ -28,7 +28,8 @@ struct SdkConfig: Equatable {
     let perCurrency: [Currency: Region]
 
     /// Returns endpoints for the given currency, falling back to the `general` block, then to
-    /// the hardcoded default — so callers always get a usable URL.
+    /// the hardcoded production fallback — so callers always get a usable URL even from a
+    /// broken response.
     func endpoints(for currency: Currency) -> Endpoints {
         if let match = perCurrency[currency]?.endpoints {
             return match
@@ -36,23 +37,39 @@ struct SdkConfig: Equatable {
         if let fallback = general?.endpoints {
             return fallback
         }
-        return Self.default.general!.endpoints
+        return .fallback(for: .production)
     }
 
     /// Hardcoded fallback used before `/sdk/config` returns or when the request fails.
-    /// Mirrors the hosts currently referenced from `BaseURL` so behavior matches today's SDK
-    /// when geo-routing is unavailable.
-    static let `default` = SdkConfig(
-        general: Region(
-            endpoints: Endpoints(
+    /// Picks production or staging hosts based on the merchant-selected environment so the
+    /// fallback path stays inside the right environment too.
+    static func `default`(for environment: TabbyEnvironment) -> SdkConfig {
+        SdkConfig(
+            general: Region(endpoints: .fallback(for: environment)),
+            perCurrency: [:]
+        )
+    }
+}
+
+extension SdkConfig.Endpoints {
+    static func fallback(for environment: TabbyEnvironment) -> SdkConfig.Endpoints {
+        switch environment {
+        case .production:
+            return SdkConfig.Endpoints(
                 checkoutApiBaseUrl: "https://api.tabby.ai",
                 webCheckoutBaseUrl: "https://checkout.tabby.ai",
                 widgetsBaseUrl: "https://widgets.tabby.ai",
                 analyticsBaseUrl: "https://dp-event-collector.tabby.ai"
             )
-        ),
-        perCurrency: [:]
-    )
+        case .staging:
+            return SdkConfig.Endpoints(
+                checkoutApiBaseUrl: "https://api.tabby.dev",
+                webCheckoutBaseUrl: "https://checkout.tabby.dev",
+                widgetsBaseUrl: "https://widgets.tabby.dev",
+                analyticsBaseUrl: "https://dp-event-collector.tabby.dev"
+            )
+        }
+    }
 }
 
 extension SdkConfig: Decodable {

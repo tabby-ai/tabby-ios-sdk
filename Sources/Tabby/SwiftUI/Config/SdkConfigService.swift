@@ -10,8 +10,14 @@ import Foundation
 /// callers seeing different `SdkConfig` values.
 ///
 /// The actor never throws: on any failure (network, decode, non-200) it resolves with
-/// `SdkConfig.default`. The failed task stays cached for the lifetime of the SDK session, so
-/// once we have fallen back to defaults we keep using them.
+/// `SdkConfig.default(for:)` for the merchant-selected environment. The failed task stays
+/// cached for the lifetime of the SDK session, so once we have fallen back to defaults we
+/// keep using them.
+///
+/// The environment is read once at fetch time (not at actor init) so callers can flip
+/// `EnvironmentManager.setEnvironment(.staging)` before the first checkout call and have the
+/// staging config endpoint picked up. Switching env after the fetch task is cached is a no-op
+/// — we don't re-fetch.
 ///
 /// TODO(retry): retry/backoff is intentionally not implemented yet. To decide before adding:
 ///   - per-attempt timeout (doc says "~1s ?", marked TBD in the Phase 2 spec)
@@ -24,20 +30,20 @@ final actor SdkConfigService {
 
     static let shared = SdkConfigService()
 
-    private let endpoint: URL
     private let session: URLSession
     private let decoder: JSONDecoder
+    private let environment: () -> TabbyEnvironment
 
     private var fetchTask: Task<SdkConfig, Never>?
 
     init(
-        endpoint: URL = URL(string: "https://api.tabby.ai/api/v1/sdk/config")!,
         session: URLSession = .shared,
-        decoder: JSONDecoder = JSONDecoder()
+        decoder: JSONDecoder = JSONDecoder(),
+        environment: @escaping () -> TabbyEnvironment = { EnvironmentManager.shared.getEnvironment() }
     ) {
-        self.endpoint = endpoint
         self.session = session
         self.decoder = decoder
+        self.environment = environment
     }
 
     /// Returns the SDK configuration, triggering the fetch on first call and re-using the
@@ -46,13 +52,14 @@ final actor SdkConfigService {
         if let existing = fetchTask {
             return await existing.value
         }
-        let task = Task { await self.fetch() }
+        let environment = self.environment()
+        let task = Task { await self.fetch(for: environment) }
         fetchTask = task
         return await task.value
     }
 
-    private func fetch() async -> SdkConfig {
-        var request = URLRequest(url: endpoint)
+    private func fetch(for environment: TabbyEnvironment) async -> SdkConfig {
+        var request = URLRequest(url: environment.sdkConfigURL)
         request.httpMethod = "POST"
         request.setValue("application/json", forHTTPHeaderField: "Content-Type")
         request.setValue(SdkVersionHeader.value, forHTTPHeaderField: SdkVersionHeader.key)
@@ -60,11 +67,11 @@ final actor SdkConfigService {
         do {
             let (data, response) = try await perform(request)
             guard let http = response as? HTTPURLResponse, http.statusCode == 200 else {
-                return .default
+                return .default(for: environment)
             }
             return try decoder.decode(SdkConfig.self, from: data)
         } catch {
-            return .default
+            return .default(for: environment)
         }
     }
 
