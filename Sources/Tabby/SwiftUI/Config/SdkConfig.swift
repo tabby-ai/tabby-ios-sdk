@@ -12,7 +12,7 @@ struct SdkConfig: Equatable {
     struct Endpoints: Decodable, Equatable {
         let checkoutApiBaseUrl: String
         let webCheckoutBaseUrl: String
-        let snippetBaseUrl: String
+        let widgetsBaseUrl: String
         let analyticsBaseUrl: String
     }
 
@@ -47,7 +47,7 @@ struct SdkConfig: Equatable {
             endpoints: Endpoints(
                 checkoutApiBaseUrl: "https://api.tabby.ai",
                 webCheckoutBaseUrl: "https://checkout.tabby.ai",
-                snippetBaseUrl: "https://widgets.tabby.ai",
+                widgetsBaseUrl: "https://widgets.tabby.ai",
                 analyticsBaseUrl: "https://dp-event-collector.tabby.ai"
             )
         ),
