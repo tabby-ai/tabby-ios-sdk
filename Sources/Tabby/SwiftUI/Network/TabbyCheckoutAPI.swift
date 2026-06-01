@@ -33,7 +33,7 @@ final class Api {
             headers: [
                 "Content-Type": "application/json",
                 "Accept": "application/json",
-                "X-SDK-Version": "iOS/\(version)",
+                SdkVersionHeader.key: SdkVersionHeader.value,
                 "Authorization": "Bearer \(apiKey)"
             ],
             body: payload

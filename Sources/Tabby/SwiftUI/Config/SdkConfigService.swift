@@ -55,7 +55,7 @@ final actor SdkConfigService {
         var request = URLRequest(url: endpoint)
         request.httpMethod = "POST"
         request.setValue("application/json", forHTTPHeaderField: "Content-Type")
-        request.setValue("iOS/\(version)", forHTTPHeaderField: "X-Sdk-Version")
+        request.setValue(SdkVersionHeader.value, forHTTPHeaderField: SdkVersionHeader.key)
 
         do {
             let (data, response) = try await perform(request)
