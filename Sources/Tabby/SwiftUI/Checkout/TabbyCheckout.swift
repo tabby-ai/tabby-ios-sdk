@@ -26,13 +26,29 @@ public final class TabbySDK {
     
     public func setup(withApiKey apiKey: String) {
         self.apiKey = apiKey
-                
+
         self.analyticsService.baseURL = BaseURL.analyticsURL
         self.analyticsService.setContextItem(
             .tabbySDK(apiKey: apiKey)
         )
     }
-    
+
+    /// Warms up the SDK by prefetching geo-routing config in the background.
+    ///
+    /// Call from `application(_:didFinishLaunchingWithOptions:)` after `setup(withApiKey:)`
+    /// so the regional endpoints are in cache by the time the first snippet renders or
+    /// `configure(forPayment:)` is called — avoiding a cold-start delay on the first
+    /// merchant-facing request.
+    ///
+    /// Optional: if you skip this, the config is fetched lazily on first use instead.
+    /// Safe to call multiple times — the in-flight request is deduplicated by
+    /// `SdkConfigService`.
+    public func start() {
+        Task {
+            _ = await SdkConfigService.shared.config()
+        }
+    }
+
     public func configure(forPayment payload: TabbyCheckoutPayload, completion: @escaping (SessionCompletion) -> ()) {
         Task {
             let config = await SdkConfigService.shared.config()
