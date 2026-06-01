@@ -26,6 +26,8 @@ public struct TabbySnippetView: View {
     private let lang: Lang
     private let shouldInheritBg: Bool
 
+    @State private var widgetsBaseUrl: String?
+
     // MARK: Init
 
     /// Creates a promotional snippet for product or cart pages.
@@ -47,22 +49,36 @@ public struct TabbySnippetView: View {
         self.shouldInheritBg = shouldInheritBg
     }
 
-    // MARK: Body
-    public var body: some View {
-        let price = Int(amount)
-        let queryParams: [String: String] = [
-            "price": "\(price)",
+    private var queryParams: [String: String] {
+        [
+            "price": "\(Int(amount))",
             "currency": currency.rawValue,
             "lang": lang.rawValue,
             "publicKey": TabbySDK.shared.apiKey,
             "shouldInheritBg": "\(shouldInheritBg)"
         ]
+    }
 
-        return TabbyWebWidgetView(
-            widgetURL: BaseURL.WebView.Widgets.promo,
-            queryParams: queryParams,
-            lang: lang,
-            analyticsPrefix: "Snippet"
-        )
+    // MARK: Body
+    public var body: some View {
+        Group {
+            if let widgetsBaseUrl = widgetsBaseUrl {
+                TabbyWebWidgetView(
+                    widgetURL: "\(widgetsBaseUrl)/tabby-promo.html",
+                    queryParams: queryParams,
+                    lang: lang,
+                    analyticsPrefix: "Snippet"
+                )
+            } else {
+                // Waiting for /sdk/config — webapp handles its own shimmer once we know the
+                // right regional URL, so nothing native to show here.
+                Color.clear
+            }
+        }
+        .onAppear {
+            Task { @MainActor in
+                widgetsBaseUrl = await SdkConfigService.shared.endpoints(for: currency).widgetsBaseUrl
+            }
+        }
     }
 }

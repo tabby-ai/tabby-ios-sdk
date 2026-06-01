@@ -58,6 +58,11 @@ final actor SdkConfigService {
         return await task.value
     }
 
+    /// Convenience: returns region-resolved endpoints for the given currency.
+    func endpoints(for currency: Currency) async -> SdkConfig.Endpoints {
+        await config().endpoints(for: currency)
+    }
+
     private func fetch(for environment: TabbyEnvironment) async -> SdkConfig {
         var request = URLRequest(url: environment.sdkConfigURL)
         request.httpMethod = "POST"
