@@ -28,8 +28,6 @@ import Foundation
 ///     caches the failed Task, so today's behavior is "no retry ever")
 final actor SdkConfigService {
 
-    static let shared = SdkConfigService()
-
     private let session: URLSession
     private let decoder: JSONDecoder
     private let environment: () -> TabbyEnvironment

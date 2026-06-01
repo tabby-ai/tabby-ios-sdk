@@ -18,12 +18,13 @@ public final class TabbySDK {
     public typealias SessionCompletion = Result<SessionCompletionPayload, CheckoutError>
     
     public static var shared = TabbySDK()
-    
+
     private let analyticsService = AnalyticsService.shared
-    
+    let sdkConfigService = SdkConfigService()
+
     private(set) var apiKey: String = ""
     fileprivate var session: CheckoutSession?
-    
+
     public func setup(withApiKey apiKey: String) {
         self.apiKey = apiKey
 
@@ -45,14 +46,13 @@ public final class TabbySDK {
     /// `SdkConfigService`.
     public func start() {
         Task {
-            _ = await SdkConfigService.shared.config()
+            _ = await sdkConfigService.config()
         }
     }
 
     public func configure(forPayment payload: TabbyCheckoutPayload, completion: @escaping (SessionCompletion) -> ()) {
         Task {
-            let config = await SdkConfigService.shared.config()
-            let endpoints = config.endpoints(for: payload.payment.currency)
+            let endpoints = await sdkConfigService.endpoints(for: payload.payment.currency)
             Api.shared.createSession(
                 payload: payload,
                 apiKey: TabbySDK.shared.apiKey,

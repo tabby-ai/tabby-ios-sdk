@@ -74,7 +74,7 @@ public struct TabbyCardView: View {
         }
         .onAppear {
             Task { @MainActor in
-                webCheckoutBaseUrl = await SdkConfigService.shared.endpoints(for: currency).webCheckoutBaseUrl
+                webCheckoutBaseUrl = await TabbySDK.shared.sdkConfigService.endpoints(for: currency).webCheckoutBaseUrl
             }
         }
     }

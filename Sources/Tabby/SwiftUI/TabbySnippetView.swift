@@ -77,7 +77,7 @@ public struct TabbySnippetView: View {
         }
         .onAppear {
             Task { @MainActor in
-                widgetsBaseUrl = await SdkConfigService.shared.endpoints(for: currency).widgetsBaseUrl
+                widgetsBaseUrl = await TabbySDK.shared.sdkConfigService.endpoints(for: currency).widgetsBaseUrl
             }
         }
     }
