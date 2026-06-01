@@ -32,19 +32,10 @@ public final class TabbySDK {
         self.analyticsService.setContextItem(
             .tabbySDK(apiKey: apiKey)
         )
-    }
 
-    /// Warms up the SDK by prefetching geo-routing config in the background.
-    ///
-    /// Call from `application(_:didFinishLaunchingWithOptions:)` after `setup(withApiKey:)`
-    /// so the regional endpoints are in cache by the time the first snippet renders or
-    /// `configure(forPayment:)` is called — avoiding a cold-start delay on the first
-    /// merchant-facing request.
-    ///
-    /// Optional: if you skip this, the config is fetched lazily on first use instead.
-    /// Safe to call multiple times — the in-flight request is deduplicated by
-    /// `SdkConfigService`.
-    public func start() {
+        // Kick off /sdk/config in the background so regional endpoints are warm by the time
+        // the first snippet renders or `configure(forPayment:)` runs. Lazy resolution still
+        // works for callers that hit the SDK before this finishes.
         Task {
             _ = await sdkConfigService.config()
         }
