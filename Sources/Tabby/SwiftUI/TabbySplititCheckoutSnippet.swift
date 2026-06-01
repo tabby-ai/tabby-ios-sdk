@@ -12,9 +12,10 @@ import SwiftUI
 public struct TabbySplititCheckoutSnippet: View {
     @Environment(\.layoutDirection) var direction
     @State private var isOpened: Bool = false
+    @State private var webCheckoutBaseUrl: String?
 
     private let analyticsService = AnalyticsService.shared
-    
+
     func toggleOpen() -> Void {
         isOpened.toggle()
     }
@@ -26,13 +27,13 @@ public struct TabbySplititCheckoutSnippet: View {
     var urls: (String, String) = ("", "")
 
     private var overwritenURL: String?
-    private var pageURL: String {
-        if let overwritenURL {
+    private var pageURL: String? {
+        if let overwritenURL = overwritenURL {
             return overwritenURL
         }
-        
-        let baseURL = isRTL ? BaseURL.WebView.Splitit.ar : BaseURL.WebView.Splitit.en
-        return "\(baseURL)?price=\(amount)&currency=\(currency.rawValue)&splitPeriod=\(splitPeriod)"
+        guard let baseUrl = webCheckoutBaseUrl else { return nil }
+        let path = isRTL ? "/promos/checkout-page/credit-card-installments/ar/" : "/promos/checkout-page/credit-card-installments/en/"
+        return "\(baseUrl)\(path)?price=\(amount)&currency=\(currency.rawValue)&splitPeriod=\(splitPeriod)"
     }
     
     private var isRTL: Bool {
@@ -137,6 +138,7 @@ public struct TabbySplititCheckoutSnippet: View {
           .background(Color(.white))
           .padding(.horizontal, 16)
           .onTapGesture {
+              guard pageURL != nil else { return }
               analyticsService.send(event: .LearnMore.clicked(currency: currency, installmentsCount: splitPeriod))
               toggleOpen()
           }
@@ -144,14 +146,19 @@ public struct TabbySplititCheckoutSnippet: View {
         .sheet(isPresented: $isOpened, onDismiss: {
             analyticsService.send(event: .LearnMore.popUpClosed(currency: currency, installmentsCount: splitPeriod))
         }, content: {
-          SafariView(lang: pageLang, customUrl: pageURL)
-            .onAppear(perform: {
-                analyticsService.send(event: .LearnMore.popUpOpened(currency: currency, installmentsCount: splitPeriod))
-            })
+          if let pageURL = pageURL {
+              SafariView(urlString: pageURL)
+                .onAppear(perform: {
+                    analyticsService.send(event: .LearnMore.popUpOpened(currency: currency, installmentsCount: splitPeriod))
+                })
+          }
         })
-        .onAppear(perform: {
+        .onAppear {
+            Task { @MainActor in
+                webCheckoutBaseUrl = await TabbySDK.shared.sdkConfigService.endpoints(for: currency).webCheckoutBaseUrl
+            }
             analyticsService.send(event: .SnippedCard.rendered(currency: currency, installmentsCount: splitPeriod))
-        })
+        }
     }
 }
 
