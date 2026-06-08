@@ -1,9 +1,3 @@
-//
-//  TabbyCheckout.swift
-//  Tabby
-//
-//
-
 import SwiftUI
 
 public final class TabbySDK {
@@ -18,49 +12,69 @@ public final class TabbySDK {
     public typealias SessionCompletion = Result<SessionCompletionPayload, CheckoutError>
     
     public static var shared = TabbySDK()
-    
+
     private let analyticsService = AnalyticsService.shared
-    
+    let sdkConfigService = SdkConfigService()
+
     private(set) var apiKey: String = ""
     fileprivate var session: CheckoutSession?
-    
+
     public func setup(withApiKey apiKey: String) {
         self.apiKey = apiKey
-                
+
         self.analyticsService.baseURL = BaseURL.analyticsURL
         self.analyticsService.setContextItem(
             .tabbySDK(apiKey: apiKey)
         )
-    }
-    
-    public func configure(forPayment payload: TabbyCheckoutPayload, completion: @escaping (SessionCompletion) -> ()) {
-        Api.shared.createSession(payload: payload, apiKey: TabbySDK.shared.apiKey, completed: { result in
-            DispatchQueue.main.async {
-                switch result {
-                case .success(let s):
-                    self.session = s
-                    var tabbyProductTypes: [TabbyProductType] = []
-                    
-                    for key in TabbyProductType.allCases {
-                        if s.configuration.availableProducts[key.rawValue] != nil {
-                            tabbyProductTypes.append(key)
-                        }
-                    }
 
-                    let res = SessionCompletionPayload(
-                        sessionId: s.id,
-                        paymentId: s.payment.id,
-                        tabbyProductTypes: tabbyProductTypes,
-                        rejectionReason: s.status == "rejected" ? s.configuration.products.installments.rejection_reason : nil
-                    )
-                    completion(.success(res))
-                    
-                case .failure(let error):
-                    print(error.localizedDescription)
-                    completion(.failure(error))
+        // Kick off /sdk/config in the background so regional endpoints are warm by the time
+        // the first snippet renders or `configure(forPayment:)` runs. Lazy resolution still
+        // works for callers that hit the SDK before this finishes.
+        // Once resolved, update the analytics base URL to the geo-routed host so analytics
+        // events go to the correct regional collector instead of the hardcoded fallback.
+        Task {
+            let config = await sdkConfigService.config()
+            let analyticsHost = config.general?.endpoints.analyticsBaseUrl
+                ?? SdkConfig.Endpoints.fallback.analyticsBaseUrl
+            analyticsService.baseURL = "\(analyticsHost)/v1/t"
+        }
+    }
+
+    public func configure(forPayment payload: TabbyCheckoutPayload, completion: @escaping (SessionCompletion) -> ()) {
+        Task {
+            let endpoints = await sdkConfigService.endpoints(for: payload.payment.currency)
+            Api.shared.createSession(
+                payload: payload,
+                apiKey: TabbySDK.shared.apiKey,
+                baseUrl: endpoints.checkoutApiBaseUrl
+            ) { result in
+                DispatchQueue.main.async {
+                    switch result {
+                    case .success(let s):
+                        self.session = s
+                        var tabbyProductTypes: [TabbyProductType] = []
+
+                        for key in TabbyProductType.allCases {
+                            if s.configuration.availableProducts[key.rawValue] != nil {
+                                tabbyProductTypes.append(key)
+                            }
+                        }
+
+                        let res = SessionCompletionPayload(
+                            sessionId: s.id,
+                            paymentId: s.payment.id,
+                            tabbyProductTypes: tabbyProductTypes,
+                            rejectionReason: s.status == "rejected" ? s.configuration.products.installments.rejection_reason : nil
+                        )
+                        completion(.success(res))
+
+                    case .failure(let error):
+                        print(error.localizedDescription)
+                        completion(.failure(error))
+                    }
                 }
             }
-        })
+        }
     }
 }
 

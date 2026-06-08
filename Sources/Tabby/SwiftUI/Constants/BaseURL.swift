@@ -25,17 +25,8 @@ public enum BaseURL {
         }
         
         public enum Widgets {
-            public static var promo: String {
-                return "https://widgets.tabby.ai/tabby-promo.html"
-            }
-
-            public static var card: String {
-                return "https://widgets.tabby.ai/tabby-card.html"
-            }
-
-            @available(*, deprecated, renamed: "promo")
             public static var url: String {
-                return promo
+                return "https://widgets.tabby.ai/tabby-promo.html"
             }
         }
         

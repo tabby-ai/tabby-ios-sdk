@@ -18,15 +18,22 @@ final class Api {
     
     /// Creates a checkout session.
     ///
+    /// - Parameter baseUrl: Region-resolved Checkout API host (e.g. `https://api.tabby.ai`).
+    ///   The `/api/v2/checkout` path is appended here so callers only deal with the host.
     /// - Note: It is highly recommended to send a non-empty order history if a customer had some orders.
-    func createSession(payload: TabbyCheckoutPayload, apiKey: String, completed: @escaping (Result<CheckoutSession, CheckoutError>) -> Void) {
+    func createSession(
+        payload: TabbyCheckoutPayload,
+        apiKey: String,
+        baseUrl: String,
+        completed: @escaping (Result<CheckoutSession, CheckoutError>) -> Void
+    ) {
         networkService.performRequest(
-            url: BaseURL.checkout,
+            url: "\(baseUrl)/api/v2/checkout",
             method: "POST",
             headers: [
                 "Content-Type": "application/json",
                 "Accept": "application/json",
-                "X-SDK-Version": "iOS/\(version)",
+                SdkVersionHeader.key: SdkVersionHeader.value,
                 "Authorization": "Bearer \(apiKey)"
             ],
             body: payload
@@ -35,21 +42,17 @@ final class Api {
             case .success(let session):
                 completed(.success(session))
             case .failure(let error):
-                if let error = error as? NetworkError {
-                    switch error {
-                    case .invalidUrl:
-                        completed(.failure(.invalidUrl))
-                    case .requestEncodingFailed:
-                        completed(.failure(.unableToComplete))
-                    case .responseDecodingFailed:
-                        completed(.failure(.unableToDecode))
-                    case .invalidResponse:
-                        completed(.failure(.invalidResponse))
-                    case .noResponse:
-                        completed(.failure(.noResponse))
-                    }
+                guard let error = error as? NetworkError else {
+                    completed(.failure(.unableToComplete))
+                    return
                 }
-                completed(.failure(.unableToComplete))
+                switch error {
+                case .invalidUrl:             completed(.failure(.invalidUrl))
+                case .requestEncodingFailed:  completed(.failure(.unableToComplete))
+                case .responseDecodingFailed: completed(.failure(.unableToDecode))
+                case .invalidResponse:        completed(.failure(.invalidResponse))
+                case .noResponse:             completed(.failure(.noResponse))
+                }
             }
         }
     }

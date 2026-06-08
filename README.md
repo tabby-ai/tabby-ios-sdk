@@ -243,9 +243,7 @@ struct CheckoutExampleWithTabby: View {
 
 This is required to enable Arabic locale in your snippets.
 
-### TabbySnippetView (Product/Cart Page)
-
-Use this snippet on product and cart pages to show promotional messaging with split payment options.
+### TabbySnippetView
 
 ```swift
 import UIKit
@@ -257,12 +255,7 @@ class ViewController: UIViewController {
         super.viewDidLoad()
         if #available(iOS 14.0, *) {
             let vc = UIHostingController(
-                rootView: Tabby.TabbySnippetView(
-                    amount: 1990,
-                    currency: .SAR,
-                    lang: .en,
-                    shouldInheritBg: false
-                )
+                rootView: Tabby.TabbySnippetView(amount: 1990, currency: .SAR)
             )
             addChild(vc)
             vc.view.frame = view.frame
@@ -279,7 +272,4 @@ class ViewController: UIViewController {
 
 ## Result
 
-Example of WebWidget
-<!-- ![English](./docs/TabbyCheckoutSnippet_EN.png) -->
 
-<!-- ![Arabic](./docs/TabbyCheckoutSnippet_AR.png) -->

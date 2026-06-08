@@ -31,6 +31,8 @@ public struct TabbyCardView: View {
     private let shouldInheritBg: Bool
     private let merchantCode: String
 
+    @State private var webCheckoutBaseUrl: String?
+
     // MARK: Init
 
     /// Creates a checkout snippet for the checkout page.
@@ -57,8 +59,29 @@ public struct TabbyCardView: View {
 
     // MARK: Body
     public var body: some View {
+        Group {
+            if let webCheckoutBaseUrl = webCheckoutBaseUrl {
+                TabbyWebWidgetView(
+                    htmlContent: html(webCheckoutBaseUrl: webCheckoutBaseUrl),
+                    lang: lang,
+                    analyticsPrefix: "Checkout Card"
+                )
+            } else {
+                // Waiting for /sdk/config — webapp handles its own shimmer once we know the
+                // right regional URL, so nothing native to show here.
+                Color.clear
+            }
+        }
+        .onAppear {
+            Task { @MainActor in
+                webCheckoutBaseUrl = await TabbySDK.shared.sdkConfigService.endpoints(for: currency).webCheckoutBaseUrl
+            }
+        }
+    }
+
+    private func html(webCheckoutBaseUrl: String) -> String {
         let dir = lang == .ar ? "rtl" : "ltr"
-        let html = """
+        return """
         <!DOCTYPE html>
         <html lang="\(lang.rawValue)" dir="\(dir)">
         <head>
@@ -68,7 +91,7 @@ public struct TabbyCardView: View {
         </head>
         <body>
             <div id="tabbyCard"></div>
-            <script src="https://checkout.tabby.ai/tabby-card.js"></script>
+            <script src="\(webCheckoutBaseUrl)/tabby-card.js"></script>
             <script>
                 new TabbyCard({
                     selector: '#tabbyCard',
@@ -83,12 +106,6 @@ public struct TabbyCardView: View {
         </body>
         </html>
         """
-
-        return TabbyWebWidgetView(
-            htmlContent: html,
-            lang: lang,
-            analyticsPrefix: "Checkout Card"
-        )
     }
 }
 
@@ -96,21 +113,21 @@ public struct TabbyCardView: View {
 @available(iOS 14.0, macOS 11.0, *)
 struct TabbyCardView_Previews: PreviewProvider {
     static var previews: some View {
-        TabbySDK.shared.setup(withApiKey: PreviewSecrets.publicKey)
+        TabbySDK.shared.setup(withApiKey: "pk_test_abc")
 
         return VStack(spacing: 20) {
             TabbyCardView(
                 amount: 1000,
                 currency: .SAR,
                 lang: .en,
-                merchantCode: "Ramadan"
+                merchantCode: "SA"
             )
 
             TabbyCardView(
                 amount: 1000,
                 currency: .SAR,
                 lang: .ar,
-                merchantCode: "Ramadan"
+                merchantCode: "SA"
             )
             .environment(\.layoutDirection, .rightToLeft)
         }

@@ -192,7 +192,7 @@ private struct TabbyWebView: UIViewRepresentable {
                     let script = """
                         window.postMessage(\(jsonString), '*');
                     """
-                    webView.evaluateJavaScript(script) { result, error in
+                    webView.evaluateJavaScript(script) { _, error in
                         if let error = error {
                             print("Error sending initialization data: \(error)")
                         }

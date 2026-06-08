@@ -83,10 +83,13 @@ final class NetworkService {
             return
         }
                 
-        URLSession.shared.dataTask(with: request) { data, response, error in
+        URLSession(configuration: .ephemeral).dataTask(with: request) { data, response, error in
             if let error {
                 completed(.failure(error))
                 return
+            }
+            if let data, let errorMessage = String(data: data, encoding: .utf8) {
+                print("[Tabby] server response: \(errorMessage)")
             }
             guard let response = response as? HTTPURLResponse, response.statusCode == 200 else {
                 completed(.failure(NetworkError.invalidResponse))
