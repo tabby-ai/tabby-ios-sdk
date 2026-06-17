@@ -64,7 +64,8 @@ public struct TabbyCardView: View {
                 TabbyWebWidgetView(
                     htmlContent: html(webCheckoutBaseUrl: webCheckoutBaseUrl),
                     lang: lang,
-                    analyticsPrefix: "Checkout Card"
+                    analyticsPrefix: "Checkout Card",
+                    transparentBackground: shouldInheritBg
                 )
             } else {
                 // Waiting for /sdk/config — webapp handles its own shimmer once we know the
@@ -72,10 +73,15 @@ public struct TabbyCardView: View {
                 Color.clear
             }
         }
-        .onAppear {
-            Task { @MainActor in
-                webCheckoutBaseUrl = await TabbySDK.shared.sdkConfigService.endpoints(for: currency).webCheckoutBaseUrl
-            }
+        .onAppear { resolveEndpoints() }
+        // Currency picks the geo-sharded host (e.g. SAR → checkout.tabby.sa), so a currency
+        // change must re-resolve the base URL, not just regenerate the HTML (MPC-2731).
+        .onChange(of: currency) { _ in resolveEndpoints() }
+    }
+
+    private func resolveEndpoints() {
+        Task { @MainActor in
+            webCheckoutBaseUrl = await TabbySDK.shared.sdkConfigService.endpoints(for: currency).webCheckoutBaseUrl
         }
     }
 

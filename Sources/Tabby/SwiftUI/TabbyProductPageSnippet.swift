@@ -110,10 +110,16 @@ public struct TabbyProductPageSnippet: View {
             }
         })
         .onAppear {
-            Task { @MainActor in
-                webCheckoutBaseUrl = await TabbySDK.shared.sdkConfigService.endpoints(for: currency).webCheckoutBaseUrl
-            }
+            resolveEndpoints()
             analyticsService.send(event: .SnippedCard.rendered(currency: currency, installmentsCount: installmentsCount))
+        }
+        // Currency picks the geo-sharded host, so a currency change must re-resolve the base URL (MPC-2731).
+        .onChange(of: currency) { _ in resolveEndpoints() }
+    }
+
+    private func resolveEndpoints() {
+        Task { @MainActor in
+            webCheckoutBaseUrl = await TabbySDK.shared.sdkConfigService.endpoints(for: currency).webCheckoutBaseUrl
         }
     }
 }

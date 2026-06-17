@@ -3,7 +3,7 @@ import WebKit
 
 // MARK: - Web View Source
 
-enum WebViewSource {
+enum WebViewSource: Equatable {
     case url(URL)
     case html(String)
 }
@@ -26,6 +26,7 @@ struct TabbyWebWidgetView: View {
     private let source: WebViewSource
     private let lang: Lang
     private let analyticsPrefix: String
+    private let transparentBackground: Bool
 
     // MARK: State
     @State private var webViewHeight: CGFloat = 80
@@ -39,23 +40,27 @@ struct TabbyWebWidgetView: View {
         widgetURL: String,
         queryParams: [String: String],
         lang: Lang = .en,
-        analyticsPrefix: String = "Snippet"
+        analyticsPrefix: String = "Snippet",
+        transparentBackground: Bool = false
     ) {
         let urlString = "\(widgetURL)?\(queryParams.queryString)"
         self.source = .url(URL(string: urlString)!)
         self.lang = lang
         self.analyticsPrefix = analyticsPrefix
+        self.transparentBackground = transparentBackground
     }
 
     /// Creates a web widget view that loads local HTML content.
     init(
         htmlContent: String,
         lang: Lang = .en,
-        analyticsPrefix: String = "Snippet"
+        analyticsPrefix: String = "Snippet",
+        transparentBackground: Bool = false
     ) {
         self.source = .html(htmlContent)
         self.lang = lang
         self.analyticsPrefix = analyticsPrefix
+        self.transparentBackground = transparentBackground
     }
 
     // MARK: Body
@@ -64,6 +69,7 @@ struct TabbyWebWidgetView: View {
             source: source,
             initializationData: nil,
             isScrollEnabled: false,
+            transparentBackground: transparentBackground,
             onLoaded: { isLoaded = true },
             onOpenURL: { openURLAction = $0 },
             onDimensionsChanged: { webViewHeight = $0.height }
@@ -93,6 +99,7 @@ private struct FullScreenWebView: View {
                     source: .url(url),
                     initializationData: urlAction.data,
                     isScrollEnabled: true,
+                    transparentBackground: false,
                     onLoaded: {},
                     onOpenURL: { _ in },
                     onDimensionsChanged: { _ in }
@@ -116,6 +123,7 @@ private struct TabbyWebView: UIViewRepresentable {
     let source: WebViewSource
     let initializationData: String?
     let isScrollEnabled: Bool
+    let transparentBackground: Bool
     let onLoaded: () -> Void
     let onOpenURL: (OpenURLAction) -> Void
     let onDimensionsChanged: (WebViewDimensions) -> Void
@@ -137,18 +145,32 @@ private struct TabbyWebView: UIViewRepresentable {
         let webView = WKWebView(frame: .zero, configuration: config)
         webView.navigationDelegate = context.coordinator
         webView.scrollView.isScrollEnabled = isScrollEnabled
+        if transparentBackground {
+            // WKWebView paints an opaque white canvas regardless of the page's CSS;
+            // without this, shouldInheritBg never shows the host app background.
+            webView.isOpaque = false
+            webView.backgroundColor = .clear
+            webView.scrollView.backgroundColor = .clear
+        }
 
         context.coordinator.webView = webView
-        load(in: webView)
+        load(in: webView, coordinator: context.coordinator)
         return webView
     }
 
     func updateUIView(_ webView: WKWebView, context: Context) {
         context.coordinator.webView = webView
+        // SwiftUI reuses the same WKWebView instance when the merchant changes
+        // amount/currency/api key, so the new source must be reloaded explicitly —
+        // otherwise the widget keeps showing the first URL forever (MPC-2731).
+        if context.coordinator.loadedSource != source {
+            load(in: webView, coordinator: context.coordinator)
+        }
     }
 
     // MARK: Private helper
-    private func load(in webView: WKWebView) {
+    private func load(in webView: WKWebView, coordinator: Coordinator) {
+        coordinator.loadedSource = source
         switch source {
         case .url(let url):
             webView.load(URLRequest(url: url))
@@ -165,6 +187,8 @@ private struct TabbyWebView: UIViewRepresentable {
         private let onDimensionsChanged: (WebViewDimensions) -> Void
 
         weak var webView: WKWebView?
+        /// Last source actually loaded into the web view; lets `updateUIView` skip redundant reloads.
+        var loadedSource: WebViewSource?
 
         init(initializationData: String?,
              onLoaded: @escaping () -> Void,
