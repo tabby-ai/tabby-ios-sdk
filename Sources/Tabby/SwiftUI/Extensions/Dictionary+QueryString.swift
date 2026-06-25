@@ -3,7 +3,8 @@ import Foundation
 extension Dictionary where Key == String {
 
     var queryString: String {
-        map { "\($0.key)=\($0.value)" }
-            .joined(separator: "&")
+        var components = URLComponents()
+        components.queryItems = map { URLQueryItem(name: $0.key, value: "\($0.value)") }
+        return components.percentEncodedQuery ?? ""
     }
 }

@@ -52,7 +52,7 @@ final public class AnalyticsService {
             headers: [
                 "Content-Type": "application/json",
                 "Accept": "application/json",
-                "X-SDK-Version": "iOS/\(version)",
+                SdkVersionHeader.key: SdkVersionHeader.value,
                 "Authorization": "Basic \(getAnalyticsHeader())"
             ], 
             body: preparePayload(event: event)) { (result: Result<Data?, Error>) in

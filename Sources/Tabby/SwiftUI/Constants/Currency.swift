@@ -46,3 +46,17 @@ public enum Currency: String, Codable {
     }
 }
 
+/// Lets `Currency` be used directly as a `Dictionary` key in `Codable` payloads — keyed JSON
+/// objects (e.g. `{"SAR": {...}, "AED": {...}}`) decode straight into `[Currency: Value]`
+/// on iOS 15.4+ without a custom container.
+@available(iOS 15.4, macOS 12.3, *)
+extension Currency: CodingKeyRepresentable {
+    public var codingKey: any CodingKey {
+        rawValue.codingKey
+    }
+
+    public init?<T: CodingKey>(codingKey: T) {
+        self.init(rawValue: codingKey.stringValue)
+    }
+}
+

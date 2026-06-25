@@ -14,7 +14,8 @@ import SwiftUI
 ///     amount: 1990,
 ///     currency: .SAR,
 ///     lang: .en,
-///     shouldInheritBg: false
+///     shouldInheritBg: false,
+///     merchantCode: "SA"
 /// )
 /// .frame(height: 100)
 /// ```
@@ -25,6 +26,9 @@ public struct TabbySnippetView: View {
     private let currency: Currency
     private let lang: Lang
     private let shouldInheritBg: Bool
+    private let merchantCode: String
+
+    @State private var widgetsBaseUrl: String?
 
     // MARK: Init
 
@@ -35,34 +39,60 @@ public struct TabbySnippetView: View {
     ///   - currency: Currency code (`.AED`, `.SAR`, `.KWD`, etc.)
     ///   - lang: Display language (default: `.en`)
     ///   - shouldInheritBg: Inherit background color from parent view (default: `false`)
+    ///   - merchantCode: Merchant code for your currency (e.g., "SA" for SAR, "AE" for AED, "KW" for KWD)
     public init(
         amount: Double,
         currency: Currency,
         lang: Lang = .en,
-        shouldInheritBg: Bool = false
+        shouldInheritBg: Bool = false,
+        merchantCode: String
     ) {
         self.amount = amount
         self.currency = currency
         self.lang = lang
         self.shouldInheritBg = shouldInheritBg
+        self.merchantCode = merchantCode
+    }
+
+    private var queryParams: [String: String] {
+        [
+            "price": "\(Int(amount))",
+            "currency": currency.rawValue,
+            "lang": lang.rawValue,
+            "publicKey": TabbySDK.shared.apiKey,
+            // The widget needs merchantCode to map the account and show all plans
+            // available for it; without it only the default plans render (MPC-2731).
+            "merchantCode": merchantCode,
+            "shouldInheritBg": "\(shouldInheritBg)"
+        ]
     }
 
     // MARK: Body
     public var body: some View {
-        let price = Int(amount)
-        let queryParams: [String: String] = [
-            "price": "\(price)",
-            "currency": currency.rawValue,
-            "lang": lang.rawValue,
-            "publicKey": TabbySDK.shared.apiKey,
-            "shouldInheritBg": "\(shouldInheritBg)"
-        ]
+        Group {
+            if let widgetsBaseUrl = widgetsBaseUrl {
+                TabbyWebWidgetView(
+                    widgetURL: "\(widgetsBaseUrl)/tabby-promo.html",
+                    queryParams: queryParams,
+                    lang: lang,
+                    analyticsPrefix: "Snippet",
+                    transparentBackground: shouldInheritBg
+                )
+            } else {
+                // Waiting for /sdk/config — webapp handles its own shimmer once we know the
+                // right regional URL, so nothing native to show here.
+                Color.clear
+            }
+        }
+        .onAppear { resolveEndpoints() }
+        // Currency picks the geo-sharded host (e.g. SAR → widgets.tabby.sa), so a currency
+        // change must re-resolve the base URL, not just update query params (MPC-2731).
+        .onChange(of: currency) { _ in resolveEndpoints() }
+    }
 
-        return TabbyWebWidgetView(
-            widgetURL: BaseURL.WebView.Widgets.promo,
-            queryParams: queryParams,
-            lang: lang,
-            analyticsPrefix: "Snippet"
-        )
+    private func resolveEndpoints() {
+        Task { @MainActor in
+            widgetsBaseUrl = await TabbySDK.shared.sdkConfigService.endpoints(for: currency).widgetsBaseUrl
+        }
     }
 }

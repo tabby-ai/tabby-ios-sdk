@@ -11,29 +11,31 @@ import SwiftUI
 @available(iOS 14.0, macOS 11, *)
 public struct TabbyProductPageSnippet: View {
     @State private var isOpened: Bool = false
+    @State private var webCheckoutBaseUrl: String?
     @Environment(\.layoutDirection) var direction
-    
+
     private let analyticsService = AnalyticsService.shared
-    
+
     func toggleOpen() -> Void {
         isOpened.toggle()
     }
-    
+
     let amount: Double
     let currency: Currency
     let withCurrencyInArabic: Bool
-    
+
     private let installmentsCount = 4
-    
+
     private var isRTL: Bool {
         direction == .rightToLeft
     }
-    
-    private var pageURL: String {
-        let baseURL = isRTL ? BaseURL.WebView.Tabby.ar : BaseURL.WebView.Tabby.en
-        return "\(baseURL)?price=\(amount)&currency=\(currency.rawValue)&source=sdk"
+
+    private var pageURL: String? {
+        guard let baseUrl = webCheckoutBaseUrl else { return nil }
+        let path = isRTL ? "/promos/product-page/installments/ar/" : "/promos/product-page/installments/en/"
+        return "\(baseUrl)\(path)?price=\(amount)&currency=\(currency.rawValue)&source=sdk"
     }
-    
+
     private var pageLang: Lang {
         isRTL ? .ar : .en
     }
@@ -92,6 +94,7 @@ public struct TabbyProductPageSnippet: View {
             .padding(.horizontal, 16)
             .environment(\.layoutDirection, isRTL ? .rightToLeft : .leftToRight)
             .onTapGesture {
+                guard pageURL != nil else { return }
                 analyticsService.send(event: .LearnMore.clicked(currency: currency, installmentsCount: installmentsCount))
                 toggleOpen()
             }
@@ -99,14 +102,25 @@ public struct TabbyProductPageSnippet: View {
         .sheet(isPresented: $isOpened, onDismiss: {
             analyticsService.send(event: .LearnMore.popUpClosed(currency: currency, installmentsCount: installmentsCount))
         }, content: {
-            SafariView(lang: pageLang, customUrl: pageURL)
-                .onAppear(perform: {
-                    analyticsService.send(event: .LearnMore.popUpOpened(currency: currency, installmentsCount: installmentsCount))
-                })
+            if let pageURL = pageURL {
+                SafariView(urlString: pageURL)
+                    .onAppear(perform: {
+                        analyticsService.send(event: .LearnMore.popUpOpened(currency: currency, installmentsCount: installmentsCount))
+                    })
+            }
         })
-        .onAppear(perform: {
+        .onAppear {
+            resolveEndpoints()
             analyticsService.send(event: .SnippedCard.rendered(currency: currency, installmentsCount: installmentsCount))
-        })
+        }
+        // Currency picks the geo-sharded host, so a currency change must re-resolve the base URL (MPC-2731).
+        .onChange(of: currency) { _ in resolveEndpoints() }
+    }
+
+    private func resolveEndpoints() {
+        Task { @MainActor in
+            webCheckoutBaseUrl = await TabbySDK.shared.sdkConfigService.endpoints(for: currency).webCheckoutBaseUrl
+        }
     }
 }
 
