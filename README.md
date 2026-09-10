@@ -273,3 +273,7 @@ class ViewController: UIViewController {
 ## Result
 
 
+
+## License
+
+This SDK is released under the [MIT License](LICENSE).
