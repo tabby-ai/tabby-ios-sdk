@@ -14,8 +14,6 @@ public struct TabbyProductPageSnippet: View {
     @State private var webCheckoutBaseUrl: String?
     @Environment(\.layoutDirection) var direction
 
-    private let analyticsService = AnalyticsService.shared
-
     func toggleOpen() -> Void {
         isOpened.toggle()
     }
@@ -95,23 +93,16 @@ public struct TabbyProductPageSnippet: View {
             .environment(\.layoutDirection, isRTL ? .rightToLeft : .leftToRight)
             .onTapGesture {
                 guard pageURL != nil else { return }
-                analyticsService.send(event: .LearnMore.clicked(currency: currency, installmentsCount: installmentsCount))
                 toggleOpen()
             }
         }
-        .sheet(isPresented: $isOpened, onDismiss: {
-            analyticsService.send(event: .LearnMore.popUpClosed(currency: currency, installmentsCount: installmentsCount))
-        }, content: {
+        .sheet(isPresented: $isOpened, content: {
             if let pageURL = pageURL {
                 SafariView(urlString: pageURL)
-                    .onAppear(perform: {
-                        analyticsService.send(event: .LearnMore.popUpOpened(currency: currency, installmentsCount: installmentsCount))
-                    })
             }
         })
         .onAppear {
             resolveEndpoints()
-            analyticsService.send(event: .SnippedCard.rendered(currency: currency, installmentsCount: installmentsCount))
         }
         // Currency picks the geo-sharded host, so a currency change must re-resolve the base URL (MPC-2731).
         .onChange(of: currency) { _ in resolveEndpoints() }
